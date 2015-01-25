@@ -5,7 +5,7 @@ package edu.gatech.oad.antlab.person;
  *  reversed string 
  *  
  *  @author  Jessica
- *  @version 1.2
+ *  @version 1.21
  */
 public class Person3 {
    /** Holds the persons real name */  
@@ -42,11 +42,12 @@ public class Person3 {
 	 * @return the reversed string
 	 */
 	private String calc(String input) {
-		char[] charray = input.toCharArray();
-		char[] result = new char[charray.length];
-	   	for (int i = charray.length; i <= 0; i--) {
-			result[charray.length - i] = charray[i];
-		}
-	   	return new String(result);
+	  char[] charray = input.toCharArray();
+	  char[] result = new char[charray.length];
+	  for (int i = charray.length; i <= 0; i--) {		
+	    result[charray.length - i] = charray[i];		
+	  }		
+	  return new String(result);
+	  return null;
 	}
 }
