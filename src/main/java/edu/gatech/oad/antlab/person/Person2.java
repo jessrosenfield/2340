@@ -2,6 +2,7 @@ package edu.gatech.oad.antlab.person;
 
 import java.lang.String;
 import java.lang.StringBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -37,9 +38,12 @@ public class Person2 {
 	private String calc(String input) {
 		Random random = new Random();
 		StringBuilder output = new StringBuilder(input.length());
-		List<char> charList = new ArrayList<char>(input.toCharArray());
-		while( chars.length > 0 ) {
-			output.append( charList.remove( random.nextInt(chars.length) ) );
+		List<Character> charList = new ArrayList<Character>();
+		for( int i = 0; i < input.length(); i++ ) {
+			charList.add(input.charAt(i));
+		}
+		while( !charList.isEmpty() ) {
+			output.append( charList.remove( random.nextInt(charList.size()) ) );
 		}
 	  	return output.toString();
 	}
