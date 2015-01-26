@@ -13,10 +13,6 @@ import android.widget.Button;
 
 
 public class MainActivity extends ActionBarActivity {
-
-    Button mSignIn;
-    Button mRegister;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,17 +23,6 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
 
-        mSignIn = (Button) findViewById(R.id.sign_in_button);
-        mRegister = (Button) findViewById(R.id.register_button);
-
-        mSignIn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(i);
-            }
-        });
     }
 
 
@@ -68,13 +53,29 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        Button mSignIn;
+        Button mRegister;
+
         public PlaceholderFragment() {
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_main, container, false);
+            View v = inflater.inflate(R.layout.fragment_main, container, false);
+            mSignIn = (Button) v.findViewById(R.id.sign_in_button);
+            mRegister = (Button) v.findViewById(R.id.register_button);
+
+            mSignIn.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(i);
+                }
+            });
+
+            return v;
         }
     }
 }
