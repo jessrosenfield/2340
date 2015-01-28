@@ -48,6 +48,5 @@ public class Person3 {
 	    result[charray.length - i] = charray[i];		
 	  }		
 	  return new String(result);
-	  return null;
 	}
 }
