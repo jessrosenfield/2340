@@ -75,6 +75,15 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
 
+            mRegister.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), RegisterActivity.class);
+                    startActivity(i);
+                }
+            });
+
             return v;
         }
     }
