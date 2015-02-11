@@ -15,8 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends ActionBarActivity {
 
@@ -61,6 +65,8 @@ public class RegisterActivity extends ActionBarActivity {
         private Firebase ref;
         private EditText mEmailView;
         private EditText mPasswordView;
+        private EditText mFirstName;
+        private EditText mLastName;
         private Button mRegister;
 
         public PlaceholderFragment() {
@@ -85,6 +91,9 @@ public class RegisterActivity extends ActionBarActivity {
                 }
             });
 
+            mFirstName = (EditText) rootView.findViewById(R.id.first_name_input);
+            mLastName = (EditText) rootView.findViewById(R.id.last_name_input);
+
             Firebase.setAndroidContext(getActivity());
             ref = new Firebase("https://2340.firebaseio.com");
 
@@ -101,13 +110,35 @@ public class RegisterActivity extends ActionBarActivity {
         public void attemptRegister() {
             final String email = mEmailView.getText().toString();
             final String password = mPasswordView.getText().toString();
+            final String first = mFirstName.getText().toString();
+            final String last = mLastName.getText().toString();
 
             ref.createUser(email, password, new Firebase.ResultHandler() {
 
                 @Override
                 public void onSuccess() {
-                    Intent i = new Intent(getActivity(), ApplicationScreen.class);
-                    startActivity(i);
+                    ref.authWithPassword(email, password, new Firebase.AuthResultHandler(){
+
+                        @Override
+                        public void onAuthenticated(AuthData authData) {
+                            Map<String, String> map = new HashMap<>();
+                            map.put("provider", authData.getProvider());
+                            if(authData.getProviderData().containsKey("id")){
+                                map.put("provider_id", authData.getProviderData().get("id").toString());
+                            }
+                            if(authData.getProviderData().containsKey("displayName")) {
+                                map.put("displayName", authData.getProviderData().get("displayName").toString());
+                            }
+                            map.put("firstName",first);
+                            map.put("lastName", last);
+                            ref.child("users").child(authData.getUid()).setValue(map);
+                        }
+
+                        @Override
+                        public void onAuthenticationError(FirebaseError firebaseError) {
+                            return;
+                        }
+                    });
                     getActivity().finish();
                 }
 

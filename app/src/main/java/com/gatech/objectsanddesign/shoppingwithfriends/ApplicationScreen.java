@@ -8,6 +8,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.Map;
 
 
 public class ApplicationScreen extends ActionBarActivity {
@@ -15,6 +24,7 @@ public class ApplicationScreen extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_application_screen);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -51,14 +61,34 @@ public class ApplicationScreen extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        TextView mWelcomeText;
+
         public PlaceholderFragment() {
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.fragment_application_screen, container, false);
-            return inflater.inflate(R.layout.fragment_application_screen, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_application_screen, container, false);
+            mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
+            Firebase ref = new Firebase("https://2340.firebaseio.com");
+            final AuthData auth = ref.getAuth();
+            if (auth != null) {
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String,String> map = (Map<String, String>) dataSnapshot.child("users").child(auth.getUid()).getValue();
+                        String name = map.get("firstName") + " " + map.get("lastName");
+                        mWelcomeText.setText(mWelcomeText.getText() + ", " + name);
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+            }
+            return rootView;
         }
     }
 }

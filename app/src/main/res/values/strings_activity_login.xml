@@ -11,4 +11,7 @@
     <string name="error_incorrect_password">This password is wrong</string>
     <string name="error_field_required">This field is required</string>
     <string name="application_name">Shopping With Friends</string>
+    
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
 </resources>
