@@ -26,11 +26,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -43,6 +48,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private Map<String, Integer> incorrectAttempts;
 
     Firebase ref;
 
@@ -77,6 +84,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        incorrectAttempts = new HashMap<>();
         Firebase.setAndroidContext(this);
         ref = new Firebase("https://2340.firebaseio.com");
     }
@@ -234,8 +242,36 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mEmailView.setAdapter(adapter);
     }
 
-    public void attemptAuthenticate(String email, String password) {
+    public void attemptAuthenticate(final String email, String password) {
         showProgress(true);
+        Query banned = ref.child("banned_users").equalTo(email);
+        banned.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                mPasswordView.setError("User is banned. Please contact an administrator.");
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
         ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
 
             @Override
@@ -248,6 +284,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
+                int error = (incorrectAttempts.get(email)==null)?(0):(incorrectAttempts.get(email));
+                if(error > 3){
+                    ref.child("banned_users").push().setValue(email);
+                }
+
                 showProgress(false);
                 String mError = firebaseError.getMessage();
                 if(mError.contains("email")){
@@ -261,7 +302,3 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         });
     }
 }
-
-
-
-
