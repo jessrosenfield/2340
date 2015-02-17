@@ -1,6 +1,7 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -101,6 +103,7 @@ public class FriendSearch extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     updateList();
+                    hide_keyboard_from(getActivity(), getView());
                 }
             });
 
@@ -127,7 +130,6 @@ public class FriendSearch extends ActionBarActivity {
                                         "You are already friends with " + friend.toString(),
                                         Toast.LENGTH_SHORT).show();
                             }
-
                             mFirst.getText().clear();
                             mLast.getText().clear();
                             mEmail.getText().clear();
@@ -168,7 +170,6 @@ public class FriendSearch extends ActionBarActivity {
                                 friends.add(new ConcreteUser(mFirst.getText().toString(),
                                         mLast.getText().toString(),
                                         friendID));
-                                Log.d("ADDING FRIEND: ", friends.get(friends.size() - 1).toString());
                             }
                         }
 
@@ -183,6 +184,11 @@ public class FriendSearch extends ActionBarActivity {
                     }
                 });
             }
+        }
+
+        public static void hide_keyboard_from(Context context, View view) {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 }
