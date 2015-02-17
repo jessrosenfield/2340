@@ -245,6 +245,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     public void attemptAuthenticate(final String email, String password) {
         showProgress(true);
         Query banned = ref.child("banned_users").equalTo(email);
+        //Display banned error message
         banned.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

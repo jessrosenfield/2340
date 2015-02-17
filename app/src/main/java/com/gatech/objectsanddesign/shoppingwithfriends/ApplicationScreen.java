@@ -1,5 +1,6 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.firebase.client.AuthData;
@@ -62,8 +64,11 @@ public class ApplicationScreen extends ActionBarActivity {
     public static class PlaceholderFragment extends Fragment {
 
         TextView mWelcomeText;
+        Button mSearchFriends;
+        Firebase ref;
 
         public PlaceholderFragment() {
+            ref = new Firebase("https://2340.firebaseio.com");
         }
 
         @Override
@@ -71,7 +76,16 @@ public class ApplicationScreen extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_application_screen, container, false);
             mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
-            Firebase ref = new Firebase("https://2340.firebaseio.com");
+            mSearchFriends = (Button) rootView.findViewById(R.id.search_friends);
+
+            mSearchFriends.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), FriendSearch.class);
+                    startActivity(i);
+                }
+            });
+
             final AuthData auth = ref.getAuth();
             if (auth != null) {
                 ref.addValueEventListener(new ValueEventListener() {

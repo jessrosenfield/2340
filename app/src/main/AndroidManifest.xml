@@ -35,6 +35,14 @@
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
+        <activity
+            android:name=".FriendSearch"
+            android:label="@string/title_activity_friend_search"
+            android:parentActivityName=".ApplicationScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gatech.objectsanddesign.shoppingwithfriends.ApplicationScreen" />
+        </activity>
     </application>
 
 </manifest>

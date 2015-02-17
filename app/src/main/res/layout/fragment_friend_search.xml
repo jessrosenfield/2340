@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.gatech.objectsanddesign.shoppingwithfriends.FriendSearch$PlaceholderFragment">
+
+    <TextView android:text="@string/search_friends" android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_friends"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="@string/first_name"
+        android:ems="10"
+        android:id="@+id/first_name_input_friend_search"
+        android:layout_below="@+id/search_friends"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="@string/last_name"
+        android:ems="10"
+        android:id="@+id/last_name_input_friend_search"
+        android:layout_below="@+id/first_name_input_friend_search"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/prompt_email"
+        android:ems="10"
+        android:id="@+id/email_input_friend_search"
+        android:layout_below="@+id/last_name_input_friend_search"
+        android:layout_alignLeft="@+id/last_name_input_friend_search"
+        android:layout_alignStart="@+id/last_name_input_friend_search" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/find_friends"
+        android:id="@+id/find_friends"
+        android:layout_below="@+id/email_input_friend_search"
+        android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/friends_list"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/find_friends" />
+</RelativeLayout>
