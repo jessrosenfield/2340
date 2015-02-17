@@ -53,7 +53,7 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
-    Button mSignIn      ;
+        Button mSignIn;
         Button mRegister;
 
         public PlaceholderFragment() {
