@@ -1,7 +1,5 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
-import com.firebase.client.AuthData;
-
 public class ConcreteUser implements  User{
     private String first;
     private String last;

@@ -3,7 +3,6 @@ package com.gatech.objectsanddesign.shoppingwithfriends;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -26,7 +25,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.firebase.client.AuthData;
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -42,7 +40,7 @@ import java.util.Map;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends NavigationActivity implements LoaderCallbacks<Cursor> {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -58,6 +56,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        super.onCreateDrawer();
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -243,14 +242,46 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mEmailView.setAdapter(adapter);
     }
 
-    public void attemptAuthenticate(final String email, String password) {
+    public void attemptAuthenticate(final String email, final String password) {
         showProgress(true);
         Query banned = ref.child("banned_users").equalTo(email);
         banned.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null)
+                if(dataSnapshot.getValue() != null){
                     mPasswordView.setError("User is banned. Please contact an administrator.");
+                    showProgress(false);
+                } else {
+                    ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
+
+                        @Override
+                        public void onAuthenticated(AuthData authData) {
+                            showProgress(false);
+                            Intent i = new Intent(LoginActivity.this, ApplicationScreen.class);
+                            startActivity(i);
+                            finish();
+                        }
+
+                        @Override
+                        public void onAuthenticationError(FirebaseError firebaseError) {
+                            int error = (incorrectAttempts.get(email)==null)?(0):(incorrectAttempts.get(email));
+                            if(error > 3){
+                                ref.child("banned_users").push().setValue(email);
+                            }
+
+                            showProgress(false);
+                            String mError = firebaseError.getMessage();
+                            if(mError.contains("email")){
+                                mEmailView.setError(mError);
+                                mEmailView.requestFocus();
+                            } else {
+                                mPasswordView.setError(firebaseError.getMessage());
+                                mPasswordView.requestFocus();
+                            }
+                        }
+                    });
+
+                }
             }
 
             @Override
@@ -259,33 +290,5 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
-        ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
-
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                showProgress(false);
-                Intent i = new Intent(LoginActivity.this, ApplicationScreen.class);
-                startActivity(i);
-                finish();
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                int error = (incorrectAttempts.get(email)==null)?(0):(incorrectAttempts.get(email));
-                if(error > 3){
-                    ref.child("banned_users").push().setValue(email);
-                }
-
-                showProgress(false);
-                String mError = firebaseError.getMessage();
-                if(mError.contains("email")){
-                    mEmailView.setError(mError);
-                    mEmailView.requestFocus();
-                } else {
-                    mPasswordView.setError(firebaseError.getMessage());
-                    mPasswordView.requestFocus();
-                }
-            }
-        });
     }
 }

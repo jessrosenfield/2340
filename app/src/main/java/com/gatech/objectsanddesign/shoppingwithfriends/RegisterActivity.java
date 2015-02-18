@@ -1,7 +1,5 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
-import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -22,12 +20,13 @@ import com.firebase.client.FirebaseError;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterActivity extends ActionBarActivity {
+public class RegisterActivity extends NavigationActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        super.onCreateDrawer();
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -136,7 +135,6 @@ public class RegisterActivity extends ActionBarActivity {
 
                         @Override
                         public void onAuthenticationError(FirebaseError firebaseError) {
-                            return;
                         }
                     });
                     getActivity().finish();

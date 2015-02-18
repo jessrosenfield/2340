@@ -2,12 +2,8 @@ package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,13 +30,14 @@ import java.util.List;
 import java.util.Map;
 
 
-public class FriendSearch extends ActionBarActivity {
+public class FriendSearch extends NavigationActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_friend_search);
+        super.onCreateDrawer();
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -119,7 +116,7 @@ public class FriendSearch extends ActionBarActivity {
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.getValue() == null){
+                            if(dataSnapshot.getValue() == null ){
                                 ref.child("users").child(ref.getAuth().getUid()).child("friends").push().setValue(friend.getUid());
                                 ref.child("users").child(friend.getUid()).child("friends").push().setValue(ref.getAuth().getUid());
                                 Toast.makeText(getActivity(),
@@ -151,7 +148,7 @@ public class FriendSearch extends ActionBarActivity {
 
         public void updateList(){
             friends = new ArrayList<>();
-            AuthData auth = ref.getAuth();
+            final AuthData auth = ref.getAuth();
             if(auth != null){
                 Query query = ref.child("users")
                         .orderByChild("firstName")
@@ -167,9 +164,11 @@ public class FriendSearch extends ActionBarActivity {
                             HashMap<String, String> friend = (HashMap) pair.getValue();
 
                             if (friend.get("lastName").equals(mLast.getText().toString())) {
-                                friends.add(new ConcreteUser(mFirst.getText().toString(),
-                                        mLast.getText().toString(),
-                                        friendID));
+                                if(!friendID.equals(auth.getUid())){
+                                    friends.add(new ConcreteUser(mFirst.getText().toString(),
+                                            mLast.getText().toString(),
+                                            friendID));
+                                }
                             }
                         }
 

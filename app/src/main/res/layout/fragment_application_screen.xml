@@ -22,4 +22,13 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/list_friends"
+        android:id="@+id/list_friends"
+        android:layout_below="@+id/search_friends"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

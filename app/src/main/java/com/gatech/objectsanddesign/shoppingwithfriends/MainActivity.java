@@ -1,7 +1,6 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,11 +22,6 @@ public class MainActivity extends NavigationActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-
     }
 
 

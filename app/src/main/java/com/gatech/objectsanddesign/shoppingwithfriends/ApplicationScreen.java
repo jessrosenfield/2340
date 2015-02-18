@@ -1,7 +1,6 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,13 +20,14 @@ import com.firebase.client.ValueEventListener;
 import java.util.Map;
 
 
-public class ApplicationScreen extends ActionBarActivity {
+public class ApplicationScreen extends NavigationActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_application_screen);
+        super.onCreateDrawer();
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -66,6 +66,7 @@ public class ApplicationScreen extends ActionBarActivity {
 
         TextView mWelcomeText;
         Button mSearchFriends;
+        Button mListFriends;
         Firebase ref;
 
         public PlaceholderFragment() {
@@ -78,8 +79,17 @@ public class ApplicationScreen extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_application_screen, container, false);
             mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
             mSearchFriends = (Button) rootView.findViewById(R.id.search_friends);
+            mListFriends = (Button) rootView.findViewById(R.id.list_friends);
 
             mSearchFriends.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), FriendSearch.class);
+                    startActivity(i);
+                }
+            });
+
+            mListFriends.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(getActivity(), FriendList.class);
@@ -92,7 +102,7 @@ public class ApplicationScreen extends ActionBarActivity {
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String,String> map = (Map<String, String>) dataSnapshot.child("users").child(auth.getUid()).getValue();
+                        Map<String, String> map = (Map<String, String>) dataSnapshot.child("users").child(auth.getUid()).getValue();
                         String name = map.get("firstName") + " " + map.get("lastName");
                         mWelcomeText.setText(mWelcomeText.getText() + ", " + name);
                     }

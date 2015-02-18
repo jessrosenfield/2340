@@ -12,7 +12,9 @@
     <string name="search_friends">Search Friends</string>
     <string name="title_activity_friend_search">FriendSearch</string>
     <string name="find_friends">Find Friends</string>
+    <string name="list_friends">List Friends</string>
     <string name="title_activity_friends_list">FriendsList</string>
     <string name="title_activity_friend_list">FriendList</string>
+    <string name="firebase">https://2340.firebasio.com</string>
 
 </resources>

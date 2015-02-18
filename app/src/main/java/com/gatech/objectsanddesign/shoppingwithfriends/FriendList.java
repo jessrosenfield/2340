@@ -1,16 +1,12 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -23,7 +19,6 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 
 
 public class FriendList extends NavigationActivity {
@@ -92,14 +87,19 @@ public class FriendList extends NavigationActivity {
             AuthData auth = ref.getAuth();
             final Query query = ref.child(auth.getUid()).child("friends");
             query.addListenerForSingleValueEvent(new ValueEventListener() {
+
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
                     Map<String, String> friendsMap = (Map) dataSnapshot.getValue();
                     for(final String friendID : friendsMap.values()){
+
                         Query friendQuery = ref.child(friendID);
-                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        friendQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
+
                                 Map<String, Object> friend = (Map) dataSnapshot.getValue();
                                 friends.add(new ConcreteUser(
                                         (String) friend.get("firstName"),
