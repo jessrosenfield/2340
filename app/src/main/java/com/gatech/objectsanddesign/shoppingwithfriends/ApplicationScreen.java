@@ -67,6 +67,7 @@ public class ApplicationScreen extends NavigationActivity {
         TextView mWelcomeText;
         Button mSearchFriends;
         Button mListFriends;
+        Button mLogout;
         Firebase ref;
 
         public PlaceholderFragment() {
@@ -80,6 +81,7 @@ public class ApplicationScreen extends NavigationActivity {
             mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
             mSearchFriends = (Button) rootView.findViewById(R.id.search_friends);
             mListFriends = (Button) rootView.findViewById(R.id.list_friends);
+            mLogout = (Button) rootView.findViewById(R.id.logout);
 
             mSearchFriends.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -94,6 +96,14 @@ public class ApplicationScreen extends NavigationActivity {
                 public void onClick(View v) {
                     Intent i = new Intent(getActivity(), FriendList.class);
                     startActivity(i);
+                }
+            });
+
+            mLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ref.unauth();
+                    getActivity().finish();
                 }
             });
 

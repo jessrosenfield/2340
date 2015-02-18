@@ -23,6 +23,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
@@ -244,12 +245,14 @@ public class LoginActivity extends NavigationActivity implements LoaderCallbacks
 
     public void attemptAuthenticate(final String email, final String password) {
         showProgress(true);
-        Query banned = ref.child("banned_users").equalTo(email);
-        banned.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query banned = ref.child("banned_users").orderByValue().equalTo(email);
+        banned.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null){
-                    mPasswordView.setError("User is banned. Please contact an administrator.");
+                    Toast.makeText(getApplicationContext(),
+                            "This user has been banned. Please contact an administrator",
+                            Toast.LENGTH_SHORT).show();
                     showProgress(false);
                 } else {
                     ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
@@ -267,6 +270,8 @@ public class LoginActivity extends NavigationActivity implements LoaderCallbacks
                             int error = (incorrectAttempts.get(email)==null)?(0):(incorrectAttempts.get(email));
                             if(error > 3){
                                 ref.child("banned_users").push().setValue(email);
+                            } else {
+                                incorrectAttempts.put(email, error + 1);
                             }
 
                             showProgress(false);
