@@ -6,6 +6,8 @@ public class ConcreteUser implements  User{
     private String first;
     private String last;
     private String uid;
+//    private String email;
+    //TODO: friends list as field for user??
 
     ConcreteUser(String first, String last, String uid){
         this.first = first;

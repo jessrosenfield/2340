@@ -2,12 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gatech.objectsanddesign.shoppingwithfriends" >
 
+    <uses-sdk>
+android:minSdkVersion="11"
+    </uses-sdk>
+
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk>android:minSdkVersion="11"</uses-sdk>
 
     <application
         android:allowBackup="true"
@@ -39,6 +42,14 @@
         <activity
             android:name=".FriendSearch"
             android:label="@string/title_activity_friend_search"
+            android:parentActivityName=".ApplicationScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.gatech.objectsanddesign.shoppingwithfriends.ApplicationScreen" />
+        </activity>
+        <activity
+            android:name=".FriendList"
+            android:label="@string/title_activity_friend_list"
             android:parentActivityName=".ApplicationScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

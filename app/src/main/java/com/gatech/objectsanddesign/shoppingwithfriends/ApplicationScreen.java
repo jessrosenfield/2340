@@ -82,7 +82,7 @@ public class ApplicationScreen extends ActionBarActivity {
             mSearchFriends.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(getActivity(), FriendSearch.class);
+                    Intent i = new Intent(getActivity(), FriendList.class);
                     startActivity(i);
                 }
             });

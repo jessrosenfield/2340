@@ -96,7 +96,7 @@ public class FriendSearch extends ActionBarActivity {
             mFirst = (EditText) rootView.findViewById(R.id.first_name_input_friend_search);
             mEmail = (EditText) rootView.findViewById(R.id.email_input_friend_search);
             mFind = (Button) rootView.findViewById(R.id.find_friends);
-            mFriendsList = (ListView) rootView.findViewById(R.id.friends_list);
+            mFriendsList = (ListView) rootView.findViewById(R.id.friends_search_results);
             friends = new ArrayList<>();
 
             mFind.setOnClickListener(new View.OnClickListener() {
