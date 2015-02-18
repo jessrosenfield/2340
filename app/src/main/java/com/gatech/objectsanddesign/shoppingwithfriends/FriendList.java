@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +14,15 @@ import android.os.Build;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 
 public class FriendList extends NavigationActivity {
@@ -23,6 +32,7 @@ public class FriendList extends NavigationActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
         super.onCreateDrawer();
+        Firebase.setAndroidContext(this);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -60,6 +70,7 @@ public class FriendList extends NavigationActivity {
 
         private ListView mFriendsList;
         private ArrayAdapter<User> friendsAdapter;
+        Firebase ref;
 
         public PlaceholderFragment() {
         }
@@ -74,10 +85,27 @@ public class FriendList extends NavigationActivity {
             return rootView;
         }
 
-        private User[] getFriends() {
-            //TODO: magic firebase
-            User[] users = {new ConcreteUser("Bob", "Bobert", "bbobert3")};
-            return users;
+        private ArrayList<User> getFriends() {
+            ArrayList<User> friends = new ArrayList<>();
+            ref = new Firebase("https://2340.firebaseio.com/users");
+            AuthData auth = ref.getAuth();
+            Query query = ref.child(auth.getUid()).child("friends");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Map<String, String> friendsMap = (Map) dataSnapshot.getValue();
+                    for(String friendID : friendsMap.values()){
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+
+            return friends;
         }
     }
 }

@@ -31,6 +31,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -245,26 +246,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     public void attemptAuthenticate(final String email, String password) {
         showProgress(true);
         Query banned = ref.child("banned_users").equalTo(email);
-        //Display banned error message
-        banned.addChildEventListener(new ChildEventListener() {
+        banned.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                mPasswordView.setError("User is banned. Please contact an administrator.");
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null)
+                    mPasswordView.setError("User is banned. Please contact an administrator.");
             }
 
             @Override
