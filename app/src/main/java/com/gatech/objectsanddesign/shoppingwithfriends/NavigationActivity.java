@@ -1,5 +1,6 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.firebase.client.Firebase;
 
 public class NavigationActivity extends ActionBarActivity {
     private String[] mTitleList;
@@ -98,8 +101,31 @@ public class NavigationActivity extends ActionBarActivity {
         mDrawerList.setItemChecked(position, true);
         setTitle(mTitleList[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
-
-
+        Intent i;
+        switch(position) {
+            case 0:
+                 i = new Intent(this, ApplicationScreen.class);
+                startActivity(i);
+                finish();
+                break;
+            case 1:
+                i = new Intent(this, FriendSearch.class);
+                startActivity(i);
+                finish();
+                break;
+            case 2:
+                i = new Intent(this, FriendList.class);
+                startActivity(i);
+                finish();
+                break;
+            case 3:
+                Firebase.setAndroidContext(this);
+                (new Firebase("http://2340.firebaseio.com")).unauth();
+                i = new Intent(this, MainActivity.class);
+                startActivity(i);
+                finish();
+                break;
+        }
     }
 
     @Override
