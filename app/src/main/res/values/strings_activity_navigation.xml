@@ -2,9 +2,9 @@
 <resources>
     <string-array name="navigation_drawer_list">
         <item>Home</item>
-        <item>Find Friends</item>
-        <item>Friends</item>
-        <item>Logout</item>
+        <item>@string/find_friends</item>
+        <item>@string/list_friends</item>
+        <item>@string/logout</item>
     </string-array>
 
     <string name="drawer_open">Open</string>

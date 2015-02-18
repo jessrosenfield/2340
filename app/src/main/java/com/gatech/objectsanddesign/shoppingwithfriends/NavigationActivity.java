@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +40,7 @@ public class NavigationActivity extends ActionBarActivity {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
+                mTitle = getTitle();
                 getSupportActionBar().setTitle(mTitle);
             }
 
@@ -101,31 +103,30 @@ public class NavigationActivity extends ActionBarActivity {
         mDrawerList.setItemChecked(position, true);
         setTitle(mTitleList[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
-        Intent i;
+        Intent i = new Intent(this, ApplicationScreen.class);
         switch(position) {
             case 0:
-                 i = new Intent(this, ApplicationScreen.class);
-                startActivity(i);
-                finish();
+                i = new Intent(this, ApplicationScreen.class);
                 break;
             case 1:
                 i = new Intent(this, FriendSearch.class);
-                startActivity(i);
-                finish();
                 break;
             case 2:
                 i = new Intent(this, FriendList.class);
-                startActivity(i);
-                finish();
                 break;
             case 3:
                 Firebase.setAndroidContext(this);
                 (new Firebase("http://2340.firebaseio.com")).unauth();
                 i = new Intent(this, MainActivity.class);
-                startActivity(i);
                 finish();
                 break;
         }
+
+        Log.d("NAME: ", this.getClass().getSimpleName());
+        if(!this.getClass().getSimpleName().equals("ApplicationScreen")){
+            finish();
+        }
+        startActivity(i);
     }
 
     @Override

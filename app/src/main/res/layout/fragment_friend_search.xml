@@ -6,7 +6,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.gatech.objectsanddesign.shoppingwithfriends.FriendSearch$PlaceholderFragment">
 
-    <TextView android:text="@string/search_friends" android:layout_width="wrap_content"
+    <TextView android:text="@string/find_friends" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/search_friends"
         android:textSize="@dimen/abc_text_size_headline_material"

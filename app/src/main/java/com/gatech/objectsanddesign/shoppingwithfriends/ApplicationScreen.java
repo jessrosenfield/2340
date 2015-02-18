@@ -26,6 +26,13 @@ public class ApplicationScreen extends NavigationActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
+
+        if((new Firebase("https://2340.firebaseio.com").getAuth() == null)){
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+            finish();
+        }
+
         setContentView(R.layout.activity_application_screen);
         super.onCreateDrawer();
         if (savedInstanceState == null) {

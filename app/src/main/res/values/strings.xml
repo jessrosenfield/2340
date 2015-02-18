@@ -4,7 +4,7 @@
     <string name="title_activity_main">Shopping With Friends</string>
     <string name="title_activity_application_screen">Shopping With Friends</string>
     <string name="title_activity_register">Register</string>
-    <string name="title_activity_friend_search">Search Friends</string>
+    <string name="title_activity_friend_search">Find Friends</string>
     <string name="title_activity_friend_list">Your Friends</string>
     <string name="title_activity_login">Login</string>
     <string name="app_name">ShoppingWithFriends</string>
@@ -12,7 +12,6 @@
     <string name="action_settings">Settings</string>
     <string name="welcome">Welcome to Shopping With Friends</string>
     <string name="error_account_exists">There already exists an account under this email</string>
-    <string name="search_friends">Search Friends</string>
     <string name="find_friends">Find Friends</string>
     <string name="list_friends">List Friends</string>
     <string name="firebase">https://2340.firebasio.com</string>
