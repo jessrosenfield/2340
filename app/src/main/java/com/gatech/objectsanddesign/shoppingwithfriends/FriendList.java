@@ -23,6 +23,7 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class FriendList extends NavigationActivity {
@@ -86,16 +87,31 @@ public class FriendList extends NavigationActivity {
         }
 
         private ArrayList<User> getFriends() {
-            ArrayList<User> friends = new ArrayList<>();
+            final ArrayList<User> friends = new ArrayList<>();
             ref = new Firebase("https://2340.firebaseio.com/users");
             AuthData auth = ref.getAuth();
-            Query query = ref.child(auth.getUid()).child("friends");
+            final Query query = ref.child(auth.getUid()).child("friends");
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Map<String, String> friendsMap = (Map) dataSnapshot.getValue();
-                    for(String friendID : friendsMap.values()){
+                    for(final String friendID : friendsMap.values()){
+                        Query friendQuery = ref.child(friendID);
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Map<String, Object> friend = (Map) dataSnapshot.getValue();
+                                friends.add(new ConcreteUser(
+                                        (String) friend.get("firstName"),
+                                        (String) friend.get("lastName"),
+                                        friendID));
+                            }
 
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+
+                            }
+                        });
                     }
                 }
 
