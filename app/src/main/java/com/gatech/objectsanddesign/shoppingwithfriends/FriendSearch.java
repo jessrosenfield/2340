@@ -117,8 +117,12 @@ public class FriendSearch extends NavigationActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if(dataSnapshot.getValue() == null ){
-                                ref.child("users").child(ref.getAuth().getUid()).child("friends").push().setValue(friend.getUid());
-                                ref.child("users").child(friend.getUid()).child("friends").push().setValue(ref.getAuth().getUid());
+                                Map<String, Object> f = new HashMap<>(), u = new HashMap();
+                                f.put(friend.getUid(), 0);
+                                u.put(ref.getAuth().getUid(), 0);
+                                ref.child("users").child(ref.getAuth().getUid()).child("friends").updateChildren(f);
+                                ref.child("users").child(friend.getUid()).child("friends").updateChildren(u);
+
                                 Toast.makeText(getActivity(),
                                         "You are now friends with " + friend.toString(),
                                         Toast.LENGTH_SHORT).show();

@@ -18,6 +18,7 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -91,27 +92,31 @@ public class FriendList extends NavigationActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Map<String, String> friendsMap = (Map) dataSnapshot.getValue();
-                    for(final String friendID : friendsMap.values()){
+                    Map<String, Object> friendsMap = (Map<String, Object>) dataSnapshot.getValue();
+                    if (friendsMap != null) {
 
-                        Query friendQuery = ref.child(friendID);
-                        friendQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        for (final Map.Entry<String, Object> entry : friendsMap.entrySet()) {
 
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                            Query friendQuery = ref.child(entry.getKey());
+                            friendQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                                Map<String, Object> friend = (Map) dataSnapshot.getValue();
-                                friends.add(new ConcreteUser(
-                                        (String) friend.get("firstName"),
-                                        (String) friend.get("lastName"),
-                                        friendID));
-                            }
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            @Override
-                            public void onCancelled(FirebaseError firebaseError) {
+                                    Map<String, Object> friend = (Map<String, Object>) dataSnapshot.getValue();
+                                    friends.add(new Friend(
+                                            (String) friend.get("firstName"),
+                                            (String) friend.get("lastName"),
+                                            entry.getKey(),
+                                            (Long) entry.getValue()));
+                                }
 
-                            }
-                        });
+                                @Override
+                                public void onCancelled(FirebaseError firebaseError) {
+
+                                }
+                            });
+                        }
                     }
                 }
 

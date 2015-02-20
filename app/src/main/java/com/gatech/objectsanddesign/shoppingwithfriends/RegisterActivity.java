@@ -129,6 +129,7 @@ public class RegisterActivity extends NavigationActivity {
                                 map.put("displayName", authData.getProviderData().get("displayName").toString());
                             }
                             map.put("firstName",first);
+                            map.put("email", email);
                             map.put("lastName", last);
                             ref.child("users").child(authData.getUid()).setValue(map);
                         }
