@@ -10,16 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
-import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 
 public class FriendList extends NavigationActivity {
@@ -80,7 +74,8 @@ public class FriendList extends NavigationActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_friend_list, container, false);
             mFriendsList = (ListView) rootView.findViewById(R.id.friend_list);
-            friendsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, ref.getFriends());
+            friendsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+            ref.getFriends(friendsAdapter);
             mFriendsList.setAdapter(friendsAdapter);
             return rootView;
         }

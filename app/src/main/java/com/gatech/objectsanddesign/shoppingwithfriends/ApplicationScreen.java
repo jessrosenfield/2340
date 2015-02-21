@@ -1,8 +1,8 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -111,6 +111,8 @@ public class ApplicationScreen extends NavigationActivity {
                 public void onClick(View v) {
                     ref.unauth();
                     getActivity().finish();
+                    Intent i = new Intent(getActivity(), MainActivity.class);
+                    startActivity(i);
                 }
             });
 

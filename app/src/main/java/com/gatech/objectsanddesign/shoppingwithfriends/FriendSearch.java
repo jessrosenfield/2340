@@ -2,8 +2,9 @@ package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,17 +18,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
-import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class FriendSearch extends NavigationActivity {
@@ -108,16 +102,7 @@ public class FriendSearch extends NavigationActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     final ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
-                    if(ref.addFriend(friend.getUid())) {
-                        Toast.makeText(getActivity(),
-                                "You are now friends with " + friend.toString(),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(),
-                                "You are already friends with " + friend.toString(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-
+                    ref.addFriend(friend, getActivity());
                     mFirst.getText().clear();
                     mLast.getText().clear();
                     mEmail.getText().clear();
@@ -132,13 +117,9 @@ public class FriendSearch extends NavigationActivity {
         }
 
         public void updateList(){
-            friends = new ArrayList<>();
-            friends.addAll(ref.matchFirstName(mFirst.getText().toString()));
-            friends.addAll(ref.matchLastName(mLast.getText().toString()));
-            friends.addAll(ref.matchEmail(mEmail.getText().toString()));
-            mFriendsAdaptor.clear();
-            mFriendsAdaptor.addAll(friends);
-            mFriendsAdaptor.notifyDataSetChanged();
+            ref.matchFirstName(mFirst.getText().toString(), mFriendsAdaptor);
+            ref.matchLastName(mLast.getText().toString(), mFriendsAdaptor);
+            ref.matchEmail(mEmail.getText().toString(), mFriendsAdaptor);
         }
 
         public static void hide_keyboard_from(Context context, View view) {

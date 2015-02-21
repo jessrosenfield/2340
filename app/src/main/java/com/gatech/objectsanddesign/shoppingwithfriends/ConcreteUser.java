@@ -6,6 +6,7 @@ public class ConcreteUser implements  User{
     private String uid;
     private String email;
 
+    @Override
     public String getFirst() {
         return first;
     }
@@ -14,6 +15,7 @@ public class ConcreteUser implements  User{
         this.first = first;
     }
 
+    @Override
     public String getLast() {
         return last;
     }
@@ -26,6 +28,7 @@ public class ConcreteUser implements  User{
         this.uid = uid;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
