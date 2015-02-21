@@ -27,6 +27,7 @@ public class FriendList extends NavigationActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_friend_list);
         super.onCreateDrawer();
         Firebase.setAndroidContext(this);
@@ -65,11 +66,13 @@ public class FriendList extends NavigationActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        FirebaseInterfacer ref;
+
         private ListView mFriendsList;
-        private ArrayAdapter<User> friendsAdapter;
-        Firebase ref;
+        private ArrayAdapter<Friend> friendsAdapter;
 
         public PlaceholderFragment() {
+            ref = new FirebaseInterfacer();
         }
 
         @Override
@@ -77,56 +80,9 @@ public class FriendList extends NavigationActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_friend_list, container, false);
             mFriendsList = (ListView) rootView.findViewById(R.id.friend_list);
-            friendsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, getFriends());
+            friendsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, ref.getFriends());
             mFriendsList.setAdapter(friendsAdapter);
             return rootView;
-        }
-
-        private ArrayList<User> getFriends() {
-            final ArrayList<User> friends = new ArrayList<>();
-            ref = new Firebase("https://2340.firebaseio.com/users");
-            AuthData auth = ref.getAuth();
-            final Query query = ref.child(auth.getUid()).child("friends");
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    Map<String, Object> friendsMap = (Map<String, Object>) dataSnapshot.getValue();
-                    if (friendsMap != null) {
-
-                        for (final Map.Entry<String, Object> entry : friendsMap.entrySet()) {
-
-                            Query friendQuery = ref.child(entry.getKey());
-                            friendQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    Map<String, Object> friend = (Map<String, Object>) dataSnapshot.getValue();
-                                    friends.add(new Friend(
-                                            (String) friend.get("firstName"),
-                                            (String) friend.get("lastName"),
-                                            entry.getKey(),
-                                            (Long) entry.getValue()));
-                                }
-
-                                @Override
-                                public void onCancelled(FirebaseError firebaseError) {
-
-                                }
-                            });
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-
-                }
-            });
-
-            return friends;
         }
     }
 }

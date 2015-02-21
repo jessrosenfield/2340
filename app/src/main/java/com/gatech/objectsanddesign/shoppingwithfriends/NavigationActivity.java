@@ -63,6 +63,7 @@ public class NavigationActivity extends ActionBarActivity {
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
     }
 
     @Override

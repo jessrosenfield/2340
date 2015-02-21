@@ -72,7 +72,7 @@ public class FriendSearch extends NavigationActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-        Firebase ref;
+        FirebaseInterfacer ref;
         EditText mLast;
         EditText mFirst;
         EditText mEmail;
@@ -82,7 +82,7 @@ public class FriendSearch extends NavigationActivity {
         List<User> friends;
 
         public PlaceholderFragment() {
-            ref = new Firebase("http://2340.firebaseio.com");
+            ref = new FirebaseInterfacer();
         }
 
         @Override
@@ -108,40 +108,21 @@ public class FriendSearch extends NavigationActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     final ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
-                    String uid = ref.getAuth().getUid();
+                    if(ref.addFriend(friend.getUid())) {
+                        Toast.makeText(getActivity(),
+                                "You are now friends with " + friend.toString(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(),
+                                "You are already friends with " + friend.toString(),
+                                Toast.LENGTH_SHORT).show();
+                    }
 
-                    Query query = ref.child("users").child(uid).child("friends").orderByValue()
-                            .equalTo(friend.getUid());
+                    mFirst.getText().clear();
+                    mLast.getText().clear();
+                    mEmail.getText().clear();
+                    mFriendsAdaptor.clear();
 
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.getValue() == null ){
-                                Map<String, Object> f = new HashMap<>(), u = new HashMap();
-                                f.put(friend.getUid(), 0);
-                                u.put(ref.getAuth().getUid(), 0);
-                                ref.child("users").child(ref.getAuth().getUid()).child("friends").updateChildren(f);
-                                ref.child("users").child(friend.getUid()).child("friends").updateChildren(u);
-
-                                Toast.makeText(getActivity(),
-                                        "You are now friends with " + friend.toString(),
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getActivity(),
-                                        "You are already friends with " + friend.toString(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                            mFirst.getText().clear();
-                            mLast.getText().clear();
-                            mEmail.getText().clear();
-                            mFriendsAdaptor.clear();
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-
-                        }
-                    });
                 }
             });
 
@@ -152,41 +133,12 @@ public class FriendSearch extends NavigationActivity {
 
         public void updateList(){
             friends = new ArrayList<>();
-            final AuthData auth = ref.getAuth();
-            if(auth != null){
-                Query query = ref.child("users")
-                        .orderByChild("firstName")
-                        .equalTo(mFirst.getText().toString());
-
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, HashMap> user = (HashMap) dataSnapshot.getValue();
-
-                        for (Map.Entry pair : user.entrySet()) {
-                            String friendID = (String) pair.getKey();
-                            HashMap<String, String> friend = (HashMap) pair.getValue();
-
-                            if (friend.get("lastName").equals(mLast.getText().toString())) {
-                                if(!friendID.equals(auth.getUid())){
-                                    friends.add(new ConcreteUser(mFirst.getText().toString(),
-                                            mLast.getText().toString(),
-                                            friendID));
-                                }
-                            }
-                        }
-
-                        mFriendsAdaptor.clear();
-                        mFriendsAdaptor.addAll(friends);
-                        mFriendsAdaptor.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
-            }
+            friends.addAll(ref.matchFirstName(mFirst.getText().toString()));
+            friends.addAll(ref.matchLastName(mLast.getText().toString()));
+            friends.addAll(ref.matchEmail(mEmail.getText().toString()));
+            mFriendsAdaptor.clear();
+            mFriendsAdaptor.addAll(friends);
+            mFriendsAdaptor.notifyDataSetChanged();
         }
 
         public static void hide_keyboard_from(Context context, View view) {
