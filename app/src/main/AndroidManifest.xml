@@ -31,6 +31,7 @@ android:minSdkVersion="11"
             android:label="@string/title_activity_application_screen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -53,6 +54,10 @@ android:minSdkVersion="11"
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.gatech.objectsanddesign.shoppingwithfriends.ApplicationScreen" />
+        </activity>
+        <activity
+            android:name=".FriendDetails"
+            android:label="@string/title_activity_friend_details" >
         </activity>
     </application>
 
