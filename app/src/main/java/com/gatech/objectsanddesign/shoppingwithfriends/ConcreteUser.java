@@ -9,6 +9,20 @@ public class ConcreteUser implements User, Parcelable {
     private String uid;
     private String email;
 
+    ConcreteUser(String first, String last, String uid, String email){
+        this.first = first;
+        this.last = last;
+        this.uid = uid;
+        this.email = email;
+    }
+
+    protected ConcreteUser(Parcel in) {
+        first = in.readString();
+        last = in.readString();
+        uid = in.readString();
+        email = in.readString();
+    }
+
     @Override
     public String getFirst() {
         return first;
@@ -40,13 +54,6 @@ public class ConcreteUser implements User, Parcelable {
         this.email = email;
     }
 
-    ConcreteUser(String first, String last, String uid, String email){
-        this.first = first;
-        this.last = last;
-        this.uid = uid;
-        this.email = email;
-    }
-
     @Override
     public String toString(){
         return first + " " + last;
@@ -54,13 +61,6 @@ public class ConcreteUser implements User, Parcelable {
 
     public String getUid(){
         return uid;
-    }
-
-    protected ConcreteUser(Parcel in) {
-        first = in.readString();
-        last = in.readString();
-        uid = in.readString();
-        email = in.readString();
     }
 
     @Override
