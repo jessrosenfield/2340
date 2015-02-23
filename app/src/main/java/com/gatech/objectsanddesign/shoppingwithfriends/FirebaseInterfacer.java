@@ -1,6 +1,7 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -54,11 +55,18 @@ public class FirebaseInterfacer {
         });
     }
 
-    public void removeFriend(String friendID) {
+    public void removeFriend(final User friend, final Context context, ArrayAdapter<Friend> adapter) {
+        ref.child(curID).child("friends").child(friend.getUid()).removeValue();
+        ref.child(friend.getUid()).child("friends").child(curID).removeValue();
+        getFriends(adapter);
 
+        Toast.makeText(context,
+                "You are no longer friends with " + friend.toString(),
+                Toast.LENGTH_SHORT).show();
     }
 
     public void getFriends(final ArrayAdapter<Friend> adapter) {
+        adapter.clear();
         Query query = ref.child(curID).child("friends");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

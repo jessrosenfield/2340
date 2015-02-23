@@ -118,7 +118,7 @@ public class ApplicationScreen extends NavigationActivity {
 
             final AuthData auth = ref.getAuth();
             if (auth != null) {
-                ref.addValueEventListener(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Map<String, String> map = (Map<String, String>) dataSnapshot.child("users").child(auth.getUid()).getValue();

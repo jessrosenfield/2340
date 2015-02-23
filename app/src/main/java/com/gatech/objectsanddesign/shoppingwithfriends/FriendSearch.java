@@ -101,13 +101,12 @@ public class FriendSearch extends NavigationActivity {
             mFriendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    final ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
+                    ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
                     ref.addFriend(friend, getActivity());
                     mFirst.getText().clear();
                     mLast.getText().clear();
                     mEmail.getText().clear();
                     mFriendsAdaptor.clear();
-
                 }
             });
 

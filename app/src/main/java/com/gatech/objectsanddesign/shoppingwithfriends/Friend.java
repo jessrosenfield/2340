@@ -4,7 +4,7 @@ public class Friend extends ConcreteUser{
     private long rating;
 
     Friend(String first, String last, String uid, String email, long rating) {
-        super(first, last, email, uid);
+        super(first, last, uid, email);
         this.rating = rating;
     }
 
@@ -15,6 +15,6 @@ public class Friend extends ConcreteUser{
 
     @Override
     public String toString(){
-        return super.toString() + " " + rating;
+        return super.toString();
     }
 }
