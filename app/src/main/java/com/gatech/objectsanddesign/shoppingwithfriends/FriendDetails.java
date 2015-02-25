@@ -2,6 +2,7 @@ package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,16 +15,16 @@ import com.firebase.client.Firebase;
 
 public class FriendDetails extends NavigationActivity {
 
-    FirebaseInterfacer interfacer;
-    public Friend friend;
+    private FirebaseInterfacer interfacer;
+    private Friend friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_friend_details);
-        //super.onCreateDrawer();
-        Firebase.setAndroidContext(this);
+        super.onCreateDrawer();
+
         Bundle data = getIntent().getExtras();
         if( data.containsKey("EXTRA_Friend")) {
             if (savedInstanceState == null) {
@@ -57,7 +58,7 @@ public class FriendDetails extends NavigationActivity {
             return true;
         }
         if (id == R.id.remove_friend) {
-            interfacer.removeFriend(friend.getUid());
+            interfacer.removeFriend(friend, this);
             return true;
         }
 
@@ -72,15 +73,14 @@ public class FriendDetails extends NavigationActivity {
         private Friend mFriend;
 
         public PlaceholderFragment() {
-            //Bundle data = getArguments();
-            //mFriend = data.getParcelable("EXTRA_Friend");
-            mFriend = getActivity().getIntent().getExtras().getParcelable("EXTRA_Friend");
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_friend_details, container, false);
+            mFriend = getActivity().getIntent().getExtras().getParcelable("EXTRA_Friend");
+            Log.d("FRIEND", mFriend.toString());
             return rootView;
         }
 

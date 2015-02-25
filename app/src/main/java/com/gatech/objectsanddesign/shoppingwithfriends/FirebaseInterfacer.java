@@ -55,10 +55,9 @@ public class FirebaseInterfacer {
         });
     }
 
-    public void removeFriend(final User friend, final Context context, ArrayAdapter<Friend> adapter) {
+    public void removeFriend(final User friend, final Context context) {
         ref.child(curID).child("friends").child(friend.getUid()).removeValue();
         ref.child(friend.getUid()).child("friends").child(curID).removeValue();
-        getFriends(adapter);
 
         Toast.makeText(context,
                 "You are no longer friends with " + friend.toString(),

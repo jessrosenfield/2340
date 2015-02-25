@@ -29,8 +29,8 @@ public class ApplicationScreen extends NavigationActivity {
 
         if((new Firebase("https://2340.firebaseio.com").getAuth() == null)){
             Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
             finish();
+            startActivity(i);
         }
 
         setContentView(R.layout.activity_application_screen);
@@ -78,12 +78,12 @@ public class ApplicationScreen extends NavigationActivity {
         Firebase ref;
 
         public PlaceholderFragment() {
-            ref = new Firebase("https://2340.firebaseio.com");
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            ref = new Firebase("https://2340.firebaseio.com");
             View rootView = inflater.inflate(R.layout.fragment_application_screen, container, false);
             mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
             mSearchFriends = (Button) rootView.findViewById(R.id.search_friends);

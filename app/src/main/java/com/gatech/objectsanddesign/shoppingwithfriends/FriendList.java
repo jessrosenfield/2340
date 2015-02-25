@@ -1,5 +1,6 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -24,7 +26,7 @@ public class FriendList extends NavigationActivity {
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_friend_list);
         super.onCreateDrawer();
-        Firebase.setAndroidContext(this);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -81,7 +83,7 @@ public class FriendList extends NavigationActivity {
             mFriendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    final ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
+                    final Friend friend = (Friend) parent.getItemAtPosition(position);
                     Intent i = new Intent(getActivity(), FriendDetails.class);
                     i.putExtra("EXTRA_Friend", friend);
                     startActivity(i);
