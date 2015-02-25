@@ -1,5 +1,8 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 public class Friend extends ConcreteUser{
     private long rating;
 
@@ -13,8 +16,33 @@ public class Friend extends ConcreteUser{
         this.rating = rating;
     }
 
+    protected Friend(Parcel in) {
+        super(in);
+        rating = in.readLong();
+    }
+
     @Override
     public String toString(){
         return super.toString();
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeLong(rating);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Friend> CREATOR = new Parcelable.Creator<Friend>() {
+        @Override
+        public Friend createFromParcel(Parcel in) {
+            return new Friend(in);
+        }
+
+        @Override
+        public Friend[] newArray(int size) {
+            return new Friend[size];
+        }
+    };
+
 }

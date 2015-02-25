@@ -2,13 +2,11 @@ package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -83,9 +81,11 @@ public class FriendList extends NavigationActivity {
             mFriendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
-                    ref.removeFriend(friend, getActivity(), friendsAdapter);
-
+                    final ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
+                    Intent i = new Intent(getActivity(), FriendDetails.class);
+                    i.putExtra("EXTRA_Friend", friend);
+                    startActivity(i);
+                    getActivity().finish();
                 }
             });
 

@@ -7,6 +7,7 @@
     <string name="title_activity_friend_search">Find Friends</string>
     <string name="title_activity_friend_list">Your Friends</string>
     <string name="title_activity_login">Login</string>
+    <string name="title_activity_friend_details">FriendDetails</string>
     <string name="app_name">ShoppingWithFriends</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -16,5 +17,6 @@
     <string name="list_friends">List Friends</string>
     <string name="firebase">https://2340.firebasio.com</string>
     <string name="logout">Logout</string>
+    <string name="remove_friend">Remove Friend</string>
 
 </resources>

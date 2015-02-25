@@ -1,10 +1,27 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
-public class ConcreteUser implements  User{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ConcreteUser implements User, Parcelable {
     private String first;
     private String last;
     private String uid;
     private String email;
+
+    ConcreteUser(String first, String last, String uid, String email){
+        this.first = first;
+        this.last = last;
+        this.uid = uid;
+        this.email = email;
+    }
+
+    protected ConcreteUser(Parcel in) {
+        first = in.readString();
+        last = in.readString();
+        uid = in.readString();
+        email = in.readString();
+    }
 
     @Override
     public String getFirst() {
@@ -37,13 +54,6 @@ public class ConcreteUser implements  User{
         this.email = email;
     }
 
-    ConcreteUser(String first, String last, String uid, String email){
-        this.first = first;
-        this.last = last;
-        this.uid = uid;
-        this.email = email;
-    }
-
     @Override
     public String toString(){
         return first + " " + last;
@@ -52,4 +62,30 @@ public class ConcreteUser implements  User{
     public String getUid(){
         return uid;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(first);
+        dest.writeString(last);
+        dest.writeString(uid);
+        dest.writeString(email);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<ConcreteUser> CREATOR = new Parcelable.Creator<ConcreteUser>() {
+        @Override
+        public ConcreteUser createFromParcel(Parcel in) {
+            return new ConcreteUser(in);
+        }
+
+        @Override
+        public ConcreteUser[] newArray(int size) {
+            return new ConcreteUser[size];
+        }
+    };
 }
