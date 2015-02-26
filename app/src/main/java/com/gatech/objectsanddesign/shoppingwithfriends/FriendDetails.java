@@ -32,7 +32,7 @@ public class FriendDetails extends NavigationActivity {
                 PlaceholderFragment placeholder = new PlaceholderFragment();
                 placeholder.setArguments(data);
                 getSupportFragmentManager().beginTransaction().add(
-                        android.R.id.content, placeholder).commit();
+                        R.id.container, placeholder).commit();
             }
             interfacer = new FirebaseInterfacer();
             friend = data.getParcelable("EXTRA_Friend");
