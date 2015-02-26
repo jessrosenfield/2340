@@ -75,6 +75,7 @@ public class FriendDetails extends NavigationActivity {
         TextView mNameText;
         TextView mEmailText;
         TextView mRatingText;
+        TextView mReportsGiven;
 
         public PlaceholderFragment() {
         }
@@ -87,9 +88,11 @@ public class FriendDetails extends NavigationActivity {
             mNameText = (TextView) rootView.findViewById(R.id.details_friend_name);
             mEmailText = (TextView) rootView.findViewById(R.id.details_friend_email);
             mRatingText = (TextView) rootView.findViewById(R.id.details_friend_rating);
+            mReportsGiven = (TextView) rootView.findViewById(R.id.details_friend_reports);
             mNameText.setText(mFriend.getFirst() + " " + mFriend.getLast());
             mEmailText.setText(mFriend.getEmail());
             mRatingText.setText(String.valueOf("Rating: " + mFriend.getRating()));
+            mReportsGiven.setText("Reports not yet implemented.");
             //Log.d("FRIEND", mFriend.toString());
             return rootView;
         }
