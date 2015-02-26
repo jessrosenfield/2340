@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 
@@ -71,6 +72,9 @@ public class FriendDetails extends NavigationActivity {
     public static class PlaceholderFragment extends Fragment {
 
         private Friend mFriend;
+        TextView mNameText;
+        TextView mEmailText;
+        TextView mRatingText;
 
         public PlaceholderFragment() {
         }
@@ -80,7 +84,13 @@ public class FriendDetails extends NavigationActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_friend_details, container, false);
             mFriend = getActivity().getIntent().getExtras().getParcelable("EXTRA_Friend");
-            Log.d("FRIEND", mFriend.toString());
+            mNameText = (TextView) rootView.findViewById(R.id.details_friend_name);
+            mEmailText = (TextView) rootView.findViewById(R.id.details_friend_email);
+            mRatingText = (TextView) rootView.findViewById(R.id.details_friend_rating);
+            mNameText.setText(mFriend.getFirst() + " " + mFriend.getLast());
+            mEmailText.setText(mFriend.getEmail());
+            mRatingText.setText(String.valueOf("Rating: " + mFriend.getRating()));
+            //Log.d("FRIEND", mFriend.toString());
             return rootView;
         }
 

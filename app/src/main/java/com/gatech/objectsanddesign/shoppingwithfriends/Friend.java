@@ -21,6 +21,10 @@ public class Friend extends ConcreteUser{
         rating = in.readLong();
     }
 
+    public long getRating() {
+        return rating;
+    }
+
     @Override
     public String toString(){
         return super.toString();
