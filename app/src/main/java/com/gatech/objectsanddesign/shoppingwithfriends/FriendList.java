@@ -65,13 +65,10 @@ public class FriendList extends NavigationActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
-        FirebaseInterfacer ref;
-
         private ListView mFriendsList;
         private ArrayAdapter<Friend> friendsAdapter;
 
         public PlaceholderFragment() {
-            ref = new FirebaseInterfacer();
         }
 
         @Override
@@ -80,7 +77,7 @@ public class FriendList extends NavigationActivity {
             View rootView = inflater.inflate(R.layout.fragment_friend_list, container, false);
             mFriendsList = (ListView) rootView.findViewById(R.id.friend_list);
             friendsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-            ref.getFriends(friendsAdapter);
+            FirebaseInterfacer.interfacer.getFriends(friendsAdapter);
             mFriendsList.setAdapter(friendsAdapter);
 
             mFriendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

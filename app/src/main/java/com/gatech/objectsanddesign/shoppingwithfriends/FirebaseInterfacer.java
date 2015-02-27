@@ -20,6 +20,9 @@ import java.util.Map;
  */
 
 public class FirebaseInterfacer {
+
+    public static FirebaseInterfacer interfacer = new FirebaseInterfacer();
+
     public static final String BASE = "https://2340.firebaseio.com";
     public static final String USERS = "users";
     public static final String FRIENDS = "friends";
