@@ -20,6 +20,10 @@ import com.firebase.client.FirebaseError;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity for the registration screen
+ */
+
 public class RegisterActivity extends NavigationActivity {
 
     @Override
