@@ -23,7 +23,7 @@ public class Request {
 
     @Override
     public String toString(){
-        DecimalFormat fmt = new DecimalFormat();
+        DecimalFormat fmt = new DecimalFormat("$ #######.00");
         fmt.setCurrency(Currency.getInstance(Locale.US));
         return name + ": " + fmt.format(price);
     }
