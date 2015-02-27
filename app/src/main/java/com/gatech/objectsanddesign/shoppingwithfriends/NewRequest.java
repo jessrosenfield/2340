@@ -59,7 +59,6 @@ public class NewRequest extends NavigationActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-        FirebaseInterfacer ref;
         Button mAddRequest;
         EditText mName;
         EditText mPrice;
@@ -71,7 +70,6 @@ public class NewRequest extends NavigationActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_new_request, container, false);
-            ref = new FirebaseInterfacer();
             mAddRequest = (Button) rootView.findViewById(R.id.add_request);
             mName = (EditText) rootView.findViewById(R.id.add_request_name);
             mPrice = (EditText) rootView.findViewById(R.id.add_request_price);
@@ -80,7 +78,7 @@ public class NewRequest extends NavigationActivity {
                 @Override
                 public void onClick(View v) {
                     if(validateInput()){
-                        ref.addRequest(new Request(
+                        FirebaseInterfacer.interfacer.addRequest(new Request(
                                 mName.getText().toString(),
                                 new Double(mPrice.getText().toString())
                         ));
