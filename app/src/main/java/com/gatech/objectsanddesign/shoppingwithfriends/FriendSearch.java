@@ -23,6 +23,9 @@ import com.firebase.client.Firebase;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity display to allow the user to search for friends
+ */
 
 public class FriendSearch extends NavigationActivity {
 

@@ -3,6 +3,10 @@ package com.gatech.objectsanddesign.shoppingwithfriends;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Extend the user class to be able to have a rating relationship between a user and a friend
+ */
+
 public class Friend extends ConcreteUser{
     private long rating;
 

@@ -14,6 +14,10 @@ import com.firebase.client.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides an interface to query the database
+ */
+
 public class FirebaseInterfacer {
     Firebase ref;
     String curID;
@@ -24,6 +28,11 @@ public class FirebaseInterfacer {
         curID = ref.getAuth().getUid();
     }
 
+    /**
+     * Adds a friend to the user entry of a database
+     * @param friend user to make a friend
+     * @param context
+     */
     public void addFriend(final User friend, final Context context) {
         Query query = ref.child(curID).child("friends").orderByKey()
                 .equalTo(friend.getUid());
@@ -55,6 +64,11 @@ public class FirebaseInterfacer {
         });
     }
 
+    /**
+     * Remove friend from the user
+     * @param friend friend to remove
+     * @param context
+     */
     public void removeFriend(final User friend, final Context context) {
         ref.child(curID).child("friends").child(friend.getUid()).removeValue();
         ref.child(friend.getUid()).child("friends").child(curID).removeValue();
@@ -63,6 +77,11 @@ public class FirebaseInterfacer {
                 "You are no longer friends with " + friend.toString(),
                 Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * Populates a list with the user's friends
+     * @param adapter
+     */
 
     public void getFriends(final ArrayAdapter<Friend> adapter) {
         adapter.clear();
@@ -106,18 +125,40 @@ public class FirebaseInterfacer {
         });
     }
 
+    /**
+     * matches friends ordered by first name
+     * @param first first name to match
+     * @param friends map of friends
+     */
     public void matchFirstName(String first, ArrayAdapter<User> friends) {
         findFriendsBy(first, "firstName", friends);
     }
+
+    /**
+     * matches friends ordered by last name
+     * @param last last name to match
+     * @param friends map of friends
+     */
 
     public void matchLastName(String last, ArrayAdapter<User> friends) {
         findFriendsBy(last, "lastName", friends);
     }
 
+    /**
+     * matches friends ordered by email
+     * @param email email to match
+     * @param friends map of friends
+     */
     public void matchEmail(String email, ArrayAdapter<User> friends) {
         findFriendsBy(email, "email", friends);
     }
 
+    /**
+     * Orders friends by desired attribute
+     * @param value value to search for
+     * @param attribute value to order by
+     * @param adapter Map of friends
+     */
     private void findFriendsBy(final String value, String attribute, final ArrayAdapter<User> adapter) {
         Query query = ref.orderByChild(attribute)
                 .equalTo(value);

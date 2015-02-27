@@ -19,9 +19,16 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.Map;
 
+/**
+ * Main application screen that displays after login
+ */
 
 public class ApplicationScreen extends NavigationActivity {
 
+    /**
+     * Initialize the database reference to store for the user
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +87,13 @@ public class ApplicationScreen extends NavigationActivity {
         public PlaceholderFragment() {
         }
 
+        /**
+         * Populate the fragment with the appropriate text fields and buttons
+         * @param inflater
+         * @param container
+         * @param savedInstanceState
+         * @return
+         */
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {

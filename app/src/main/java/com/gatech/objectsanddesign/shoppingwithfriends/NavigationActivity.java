@@ -15,6 +15,10 @@ import android.widget.ListView;
 
 import com.firebase.client.Firebase;
 
+/**
+ * Activity providing navigation drawer
+ */
+
 public class NavigationActivity extends ActionBarActivity {
     private String[] mTitleList;
     private DrawerLayout mDrawerLayout;

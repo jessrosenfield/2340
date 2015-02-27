@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 
+/**
+ * Activity display for the friend details
+ */
 
 public class FriendDetails extends NavigationActivity {
 
@@ -47,6 +50,11 @@ public class FriendDetails extends NavigationActivity {
         return true;
     }
 
+    /**
+     * implement the remove friend functionality in addition to the default menu
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -67,7 +75,7 @@ public class FriendDetails extends NavigationActivity {
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * A placeholder fragment containing a simple view of a friend's information
      */
     public static class PlaceholderFragment extends Fragment {
 
@@ -80,6 +88,13 @@ public class FriendDetails extends NavigationActivity {
         public PlaceholderFragment() {
         }
 
+        /**
+         * Create the view for the fragment
+         * @param inflater
+         * @param container
+         * @param savedInstanceState
+         * @return
+         */
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
