@@ -3,6 +3,7 @@ package com.gatech.objectsanddesign.shoppingwithfriends;
 import android.content.Context;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -15,17 +16,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseInterfacer {
-    Firebase ref;
-    String curID;
+    public static final String BASE = "https://2340.firebaseio.com";
+    public static final String USERS = "users";
+    public static final String FRIENDS = "friends";
+    public static final String FIRSTNAME = "firstName";
+    public static final String LASTNAME = "lastName";
+    public static final String EMAIL = "email";
+    public static final String REQUEST_NAME = "name";
+    public static final String REQUEST_PRICE = "price";
+    public static final String REQUESTS = "requests";
+
+    private Firebase ref;
+    private String curID;
 
     public FirebaseInterfacer() {
-        ref = new Firebase("https://2340.firebaseio.com");
-        ref = ref.child("users");
-        curID = ref.getAuth().getUid();
+        ref = new Firebase(BASE);
+        ref = ref.child(USERS);
+        if(ref.getAuth() != null)
+            curID = ref.getAuth().getUid();
     }
 
     public void addFriend(final User friend, final Context context) {
-        Query query = ref.child(curID).child("friends").orderByKey()
+        Query query = ref.child(curID).child(FRIENDS).orderByKey()
                 .equalTo(friend.getUid());
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -35,8 +47,8 @@ public class FirebaseInterfacer {
                     Map<String, Object> f = new HashMap<>(), u = new HashMap();
                     f.put(friend.getUid(), 0);
                     u.put(curID, 0);
-                    ref.child(ref.getAuth().getUid()).child("friends").updateChildren(f);
-                    ref.child(friend.getUid()).child("friends").updateChildren(u);
+                    ref.child(ref.getAuth().getUid()).child(FRIENDS).updateChildren(f);
+                    ref.child(friend.getUid()).child(FRIENDS).updateChildren(u);
 
                     Toast.makeText(context,
                             "You are now friends with " + friend.toString(),
@@ -56,8 +68,8 @@ public class FirebaseInterfacer {
     }
 
     public void removeFriend(final User friend, final Context context) {
-        ref.child(curID).child("friends").child(friend.getUid()).removeValue();
-        ref.child(friend.getUid()).child("friends").child(curID).removeValue();
+        ref.child(curID).child(FRIENDS).child(friend.getUid()).removeValue();
+        ref.child(friend.getUid()).child(FRIENDS).child(curID).removeValue();
 
         Toast.makeText(context,
                 "You are no longer friends with " + friend.toString(),
@@ -66,7 +78,7 @@ public class FirebaseInterfacer {
 
     public void getFriends(final ArrayAdapter<Friend> adapter) {
         adapter.clear();
-        Query query = ref.child(curID).child("friends");
+        Query query = ref.child(curID).child(FRIENDS);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -81,10 +93,10 @@ public class FirebaseInterfacer {
                                 Map<String, String> friend = (Map<String, String>) dataSnapshot.getValue();
                                 adapter.add(
                                         new Friend(
-                                                friend.get("firstName"),
-                                                friend.get("lastName"),
+                                                friend.get(FIRSTNAME),
+                                                friend.get(LASTNAME),
                                                 entry.getKey(),
-                                                friend.get("email"),
+                                                friend.get(EMAIL),
                                                 (long) entry.getValue()
                                         )
                                 );
@@ -107,15 +119,65 @@ public class FirebaseInterfacer {
     }
 
     public void matchFirstName(String first, ArrayAdapter<User> friends) {
-        findFriendsBy(first, "firstName", friends);
+        findFriendsBy(first, FIRSTNAME, friends);
     }
 
     public void matchLastName(String last, ArrayAdapter<User> friends) {
-        findFriendsBy(last, "lastName", friends);
+        findFriendsBy(last, LASTNAME, friends);
     }
 
     public void matchEmail(String email, ArrayAdapter<User> friends) {
-        findFriendsBy(email, "email", friends);
+        findFriendsBy(email, EMAIL, friends);
+    }
+
+    public void addRequest(Request request) {
+        Map<String, Object> item = new HashMap<>();
+        item.put(REQUEST_NAME, request.getName());
+        item.put(REQUEST_PRICE, request.getPrice());
+        ref.child(curID).child(REQUESTS).push().setValue(item);
+    }
+
+    public void getRequests(final ArrayAdapter<Request> adapter) {
+        Query query = ref.child(curID).child(REQUESTS);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //dataSnapshot.getValue() is a map from strings (random id) to hashmaps (that represents requests)
+                adapter.clear();
+                Map<String, Map<String, Object>> requests = (HashMap) dataSnapshot.getValue();
+                if (requests != null) {
+                    for (Map request : requests.values()) {
+                        adapter.add(
+                                new Request(
+                                        (String) request.get(REQUEST_NAME),
+                                        (double) request.get(REQUEST_PRICE)
+                                )
+                        );
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void setName(final TextView view){
+        ref.child(curID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                String name = map.get(FIRSTNAME) + " " + map.get(LASTNAME);
+                view.setText(view.getText() + ", " + name);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
     private void findFriendsBy(final String value, String attribute, final ArrayAdapter<User> adapter) {
@@ -132,10 +194,10 @@ public class FirebaseInterfacer {
                         HashMap<String, Object> friend = (HashMap) pair.getValue();
 
                         if (!friendID.equals(curID)) {
-                            adapter.add(new ConcreteUser((String) friend.get("firstName"),
-                                    (String) friend.get("lastName"),
+                            adapter.add(new ConcreteUser((String) friend.get(FIRSTNAME),
+                                    (String) friend.get(LASTNAME),
                                     friendID,
-                                    (String) friend.get("email")
+                                    (String) friend.get(EMAIL)
                             ));
                         }
                     }

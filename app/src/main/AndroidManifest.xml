@@ -59,6 +59,10 @@ android:minSdkVersion="11"
             android:name=".FriendDetails"
             android:label="@string/title_activity_friend_details" >
         </activity>
+        <activity
+            android:name=".NewRequest"
+            android:label="@string/title_activity_new_request" >
+        </activity>
     </application>
 
 </manifest>

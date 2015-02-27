@@ -108,6 +108,7 @@ public class NavigationActivity extends ActionBarActivity {
         switch(position) {
             case 0:
                 i = new Intent(this, ApplicationScreen.class);
+                finish();
                 break;
             case 1:
                 i = new Intent(this, FriendSearch.class);
@@ -116,6 +117,9 @@ public class NavigationActivity extends ActionBarActivity {
                 i = new Intent(this, FriendList.class);
                 break;
             case 3:
+                i = new Intent(this, NewRequest.class);
+                break;
+            case 4:
                 Firebase.setAndroidContext(this);
                 (new Firebase("http://2340.firebaseio.com")).unauth();
                 i = new Intent(this, MainActivity.class);
@@ -123,8 +127,7 @@ public class NavigationActivity extends ActionBarActivity {
                 break;
         }
 
-        Log.d("NAME: ", this.getClass().getSimpleName());
-        if(!this.getClass().getSimpleName().equals("ApplicationScreen")){
+        if(!this.getClass().getSimpleName().equals(ApplicationScreen.class.getSimpleName())){
             finish();
         }
         startActivity(i);

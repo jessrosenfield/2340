@@ -8,7 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.AuthData;
@@ -26,15 +28,9 @@ public class ApplicationScreen extends NavigationActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
-
-        if((new Firebase("https://2340.firebaseio.com").getAuth() == null)){
-            Intent i = new Intent(this, MainActivity.class);
-            finish();
-            startActivity(i);
-        }
-
         setContentView(R.layout.activity_application_screen);
         super.onCreateDrawer();
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -72,10 +68,9 @@ public class ApplicationScreen extends NavigationActivity {
     public static class PlaceholderFragment extends Fragment {
 
         TextView mWelcomeText;
-        Button mSearchFriends;
-        Button mListFriends;
-        Button mLogout;
-        Firebase ref;
+        ListView mRequestsList;
+        ArrayAdapter<Request> mRequestsAdapter;
+        FirebaseInterfacer ref;
 
         public PlaceholderFragment() {
         }
@@ -83,54 +78,19 @@ public class ApplicationScreen extends NavigationActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            ref = new Firebase("https://2340.firebaseio.com");
             View rootView = inflater.inflate(R.layout.fragment_application_screen, container, false);
-            mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
-            mSearchFriends = (Button) rootView.findViewById(R.id.search_friends);
-            mListFriends = (Button) rootView.findViewById(R.id.list_friends);
-            mLogout = (Button) rootView.findViewById(R.id.logout);
-
-            mSearchFriends.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(getActivity(), FriendSearch.class);
-                    startActivity(i);
-                }
-            });
-
-            mListFriends.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(getActivity(), FriendList.class);
-                    startActivity(i);
-                }
-            });
-
-            mLogout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ref.unauth();
-                    getActivity().finish();
-                    Intent i = new Intent(getActivity(), MainActivity.class);
-                    startActivity(i);
-                }
-            });
-
-            final AuthData auth = ref.getAuth();
-            if (auth != null) {
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, String> map = (Map<String, String>) dataSnapshot.child("users").child(auth.getUid()).getValue();
-                        String name = map.get("firstName") + " " + map.get("lastName");
-                        mWelcomeText.setText(mWelcomeText.getText() + ", " + name);
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
+            if((new Firebase("https://2340.firebaseio.com").getAuth() == null)){
+                Intent i = new Intent(getActivity(), MainActivity.class);
+                getActivity().finish();
+                startActivity(i);
+            } else {
+                ref = new FirebaseInterfacer();
+                mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
+                mRequestsList = (ListView) rootView.findViewById(R.id.requests_list);
+                mRequestsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+                mRequestsList.setAdapter(mRequestsAdapter);
+                ref.setName(mWelcomeText);
+                ref.getRequests(mRequestsAdapter);
             }
             return rootView;
         }
