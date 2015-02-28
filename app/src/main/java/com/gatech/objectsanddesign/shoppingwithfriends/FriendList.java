@@ -14,9 +14,6 @@ import android.widget.ListView;
 
 import com.firebase.client.Firebase;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * UI class to display the list of friends retrieved from firebase
  */

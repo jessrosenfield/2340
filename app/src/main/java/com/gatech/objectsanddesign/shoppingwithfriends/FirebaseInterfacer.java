@@ -1,7 +1,6 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
