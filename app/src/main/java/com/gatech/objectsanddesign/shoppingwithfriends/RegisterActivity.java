@@ -24,7 +24,7 @@ import java.util.Map;
  * Activity for the registration screen
  */
 
-public class RegisterActivity extends NavigationActivity {
+public class RegisterActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
