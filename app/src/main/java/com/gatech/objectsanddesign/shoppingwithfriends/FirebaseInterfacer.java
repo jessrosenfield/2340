@@ -167,12 +167,22 @@ public class FirebaseInterfacer {
         findFriendsBy(email, EMAIL, friends);
     }
 
+    /**
+     * Add user's request to database for persistence
+     * @param request the request to be added
+     */
+
     public void addRequest(Request request) {
         Map<String, Object> item = new HashMap<>();
         item.put(REQUEST_NAME, request.getName());
         item.put(REQUEST_PRICE, request.getPrice());
         ref.child(curID).child(REQUESTS).push().setValue(item);
     }
+
+    /**
+     * Populate a list with the user's current requests
+     * @param adapter object to contain the user's requests
+     */
 
     public void getRequests(final ArrayAdapter<Request> adapter) {
         Query query = ref.child(curID).child(REQUESTS);
@@ -201,6 +211,11 @@ public class FirebaseInterfacer {
         });
     }
 
+
+    /**
+     * set the name of a user
+     * @param view the view that needs to change corresponding to a change in the name
+     */
     public void setName(final TextView view){
         ref.child(curID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

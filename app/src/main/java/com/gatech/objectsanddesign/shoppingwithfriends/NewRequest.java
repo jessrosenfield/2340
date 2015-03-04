@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
+/**
+ * Activity for user to make new requests
+ */
 
 public class NewRequest extends NavigationActivity {
 
