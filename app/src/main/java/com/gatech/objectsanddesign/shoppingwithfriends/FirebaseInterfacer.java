@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -38,8 +39,16 @@ public class FirebaseInterfacer {
     public FirebaseInterfacer() {
         ref = new Firebase(BASE);
         ref = ref.child(USERS);
-        if(ref.getAuth() != null)
-            curID = ref.getAuth().getUid();
+        curID = ref.getAuth().getUid();
+
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if(authData != null){
+                    curID = ref.getAuth().getUid();
+                }
+            }
+        });
     }
 
     /**

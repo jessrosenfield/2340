@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -110,12 +111,8 @@ public class NavigationActivity extends ActionBarActivity {
         Intent i = new Intent(this, ApplicationScreen.class);
         switch(position) {
             case 0:
-                if(this.getClass().getSimpleName().equals(ApplicationScreen.class.getSimpleName())){
-                    return;
-                } else {
-                    i = new Intent(this, ApplicationScreen.class);
-                    break;
-                }
+                i = new Intent(this, ApplicationScreen.class);
+                break;
             case 1:
                 i = new Intent(this, FriendSearch.class);
                 break;
@@ -133,10 +130,12 @@ public class NavigationActivity extends ActionBarActivity {
                 break;
         }
 
-        if(!this.getClass().getSimpleName().equals(ApplicationScreen.class.getSimpleName())){
+        // If the target is the same as the current activity, do nothing
+        if(!this.getClass().getName().equals(i.getComponent().getClassName())){
+            Log.d(this.getClass().getName(), i.getComponent().getClassName());
             finish();
+            startActivity(i);
         }
-        startActivity(i);
     }
 
     @Override

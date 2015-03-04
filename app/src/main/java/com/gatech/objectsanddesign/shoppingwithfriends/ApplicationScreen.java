@@ -67,7 +67,6 @@ public class ApplicationScreen extends NavigationActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
-        TextView mWelcomeText;
         ListView mRequestsList;
         ArrayAdapter<Request> mRequestsAdapter;
 
@@ -90,11 +89,9 @@ public class ApplicationScreen extends NavigationActivity {
                 getActivity().finish();
                 startActivity(i);
             } else {
-                mWelcomeText = (TextView) rootView.findViewById(R.id.welcome);
                 mRequestsList = (ListView) rootView.findViewById(R.id.requests_list);
                 mRequestsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
                 mRequestsList.setAdapter(mRequestsAdapter);
-                FirebaseInterfacer.interfacer.setName(mWelcomeText);
                 FirebaseInterfacer.interfacer.getRequests(mRequestsAdapter);
             }
             return rootView;
