@@ -31,7 +31,11 @@ public class FirebaseInterfacer {
     public static final String EMAIL = "email";
     public static final String REQUEST_NAME = "name";
     public static final String REQUEST_PRICE = "price";
+    public static final String REQUEST_MATCHED = "matched";
     public static final String REQUESTS = "requests";
+    public static final String SALE_NAME = "name";
+    public static final String SALE_PRICE = "price";
+    public static final String SALES = "sales";
 
     private Firebase ref;
     private String curID;
@@ -185,14 +189,26 @@ public class FirebaseInterfacer {
         Map<String, Object> item = new HashMap<>();
         item.put(REQUEST_NAME, request.getName());
         item.put(REQUEST_PRICE, request.getPrice());
+        item.put(REQUEST_MATCHED, request.isMatched());
         ref.child(curID).child(REQUESTS).push().setValue(item);
+    }
+
+    /**
+     * Add user's sale to database for persistence
+     * @param sale the sale to be added
+     */
+
+    public void addSale(Sale sale) {
+        Map<String, Object> item = new HashMap<>();
+        item.put(SALE_NAME, sale.getName());
+        item.put(SALE_PRICE, sale.getPrice());
+        ref.child(curID).child(SALES).push().setValue(item);
     }
 
     /**
      * Populate a list with the user's current requests
      * @param adapter object to contain the user's requests
      */
-
     public void getRequests(final ArrayAdapter<Request> adapter) {
         Query query = ref.child(curID).child(REQUESTS);
         query.addValueEventListener(new ValueEventListener() {
@@ -219,6 +235,53 @@ public class FirebaseInterfacer {
             }
         });
     }
+
+    /**
+     * Populate a list with the user's current sales
+     * @param adapter object to contain the user's sales
+     */
+    public void getSales(final ArrayAdapter<Sale> adapter) {
+        Query query = ref.child(curID).child(SALES);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //dataSnapshot.getValue() is a map from strings (random id) to hashmaps (that represents sales)
+                adapter.clear();
+                Map<String, Map<String, Object>> sales = (HashMap) dataSnapshot.getValue();
+                if (sales != null) {
+                    for (Map sale : sales.values()) {
+                        adapter.add(
+                                new Sale(
+                                        (String) sale.get(SALE_NAME),
+                                        (double) sale.get(SALE_PRICE)
+                                )
+                        );
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+//
+//    private void findMatches(Sale sale) {
+//        Object dataSnapshot;
+//        Query query = ref.child(USERS);
+//        Map<String, Map<String, Object>> requests = (HashMap) dataSnapshot.getValue();
+//        if (requests != null) {
+//            for (Map.Entry entry : requests.entrySet()) {
+//                Map request = (Map) entry.getValue();
+//                if (request.get(REQUEST_NAME).equals(sale.getName())) {
+//                    if ((Double) request.get(REQUEST_PRICE) >= sale.getPrice()) {
+//                        ref.child(USERS).child(curID).child(REQUESTS).child((String) entry.getKey()).child(REQUEST_MATCHED).set(true);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 
     /**

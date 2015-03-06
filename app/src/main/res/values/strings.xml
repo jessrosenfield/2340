@@ -9,6 +9,7 @@
     <string name="title_activity_login">Login</string>
     <string name="title_activity_friend_details">Friend Details</string>
     <string name="title_activity_new_request">New Request</string>
+    <string name="title_activity_new_sale">New Sale</string>
     <string name="app_name">ShoppingWithFriends</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -21,5 +22,7 @@
     <string name="remove_friend">Remove Friend</string>
     <string name="add_request">Add Request</string>
     <string name="your_requests">Your Requests</string>
+    <string name="add_sale">Add Sale</string>
+    <string name="your_sales">Your Sales</string>
 
 </resources>

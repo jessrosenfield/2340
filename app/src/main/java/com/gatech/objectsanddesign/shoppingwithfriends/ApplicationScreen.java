@@ -69,6 +69,8 @@ public class ApplicationScreen extends NavigationActivity {
 
         ListView mRequestsList;
         ArrayAdapter<Request> mRequestsAdapter;
+        ListView mSalesList;
+        ArrayAdapter<Sale> mSalesAdapter;
 
         public PlaceholderFragment() {
         }

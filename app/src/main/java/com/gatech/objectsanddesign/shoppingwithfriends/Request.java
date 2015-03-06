@@ -10,6 +10,7 @@ import java.util.Locale;
 public class Request {
     private String name;
     private double price;
+    private boolean matched;
 
     /**
      * Get the name of the requested item
@@ -27,9 +28,15 @@ public class Request {
         return price;
     }
 
+    /**
+     * Instantiate a new request
+     * @param name the name of the requested item
+     * @param price the price of the requested item
+     */
     public Request(String name, double price) {
         this.name = name;
         this.price = price;
+        matched = false;
     }
 
     /**
@@ -41,5 +48,21 @@ public class Request {
         DecimalFormat fmt = new DecimalFormat("$ #######.00");
         fmt.setCurrency(Currency.getInstance(Locale.US));
         return name + ": " + fmt.format(price);
+    }
+
+    /**
+     * Set whether a matched sale has been found for the requested item
+     * @param matched whether a matched sale has been found for the requested item
+     */
+    public void setMatched(boolean matched) {
+        this.matched = matched;
+    }
+
+    /**
+     * Gets whether a matched sale has been found for the requested item
+     * @return true if request is matched otherwise false
+     */
+    public boolean isMatched() {
+        return matched;
     }
 }
