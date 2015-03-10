@@ -21,8 +21,6 @@ import java.util.Map;
 
 public class FirebaseInterfacer {
 
-    public static FirebaseInterfacer interfacer = new FirebaseInterfacer();
-
     public static final String BASE = "https://2340.firebaseio.com";
     public static final String USERS = "users";
     public static final String FRIENDS = "friends";
@@ -36,7 +34,7 @@ public class FirebaseInterfacer {
     public static final String SALE_NAME = "name";
     public static final String SALE_PRICE = "price";
     public static final String SALES = "sales";
-
+    public static FirebaseInterfacer interfacer = new FirebaseInterfacer();
     private Firebase ref;
     private String curID;
 
@@ -48,7 +46,7 @@ public class FirebaseInterfacer {
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
-                if(authData != null){
+                if (authData != null) {
                     curID = ref.getAuth().getUid();
                 }
             }
@@ -57,8 +55,9 @@ public class FirebaseInterfacer {
 
     /**
      * Adds a friend to the user entry of a database
-     * @param friend user to make a friend
-     * @param context
+     *
+     * @param friend  user to make a friend
+     * @param context the activity in which to display the toast
      */
     public void addFriend(final User friend, final Context context) {
         Query query = ref.child(curID).child(FRIENDS).orderByKey()
@@ -68,7 +67,7 @@ public class FirebaseInterfacer {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null) {
-                    Map<String, Object> f = new HashMap<>(), u = new HashMap();
+                    Map<String, Object> f = new HashMap<>(), u = new HashMap<>();
                     f.put(friend.getUid(), 0);
                     u.put(curID, 0);
                     ref.child(ref.getAuth().getUid()).child(FRIENDS).updateChildren(f);
@@ -93,8 +92,9 @@ public class FirebaseInterfacer {
 
     /**
      * Remove friend from the user
-     * @param friend friend to remove
-     * @param context
+     *
+     * @param friend  friend to remove
+     * @param context activity to display toast in
      */
     public void removeFriend(final User friend, final Context context) {
         ref.child(curID).child(FRIENDS).child(friend.getUid()).removeValue();
@@ -107,11 +107,21 @@ public class FirebaseInterfacer {
 
     /**
      * Populates a list with the user's friends
-     * @param adapter
+     *
+     * @param adapter the list adapter to populate with friends
      */
 
     public void getFriends(final ArrayAdapter<Friend> adapter) {
         adapter.clear();
+        iterateOverFriends(new Consumer<Friend>() {
+            @Override
+            public void consume(Friend friend) {
+                adapter.add(friend);
+            }
+        });
+    }
+
+    private void iterateOverFriends(final Consumer<Friend> consumer) {
         Query query = ref.child(curID).child(FRIENDS);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -125,7 +135,7 @@ public class FirebaseInterfacer {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Map<String, String> friend = (Map<String, String>) dataSnapshot.getValue();
-                                adapter.add(
+                                consumer.consume(
                                         new Friend(
                                                 friend.get(FIRSTNAME),
                                                 friend.get(LASTNAME),
@@ -150,11 +160,13 @@ public class FirebaseInterfacer {
 
             }
         });
+
     }
 
     /**
      * matches friends ordered by first name
-     * @param first first name to match
+     *
+     * @param first   first name to match
      * @param friends map of friends
      */
     public void matchFirstName(String first, ArrayAdapter<User> friends) {
@@ -163,7 +175,8 @@ public class FirebaseInterfacer {
 
     /**
      * matches friends ordered by last name
-     * @param last last name to match
+     *
+     * @param last    last name to match
      * @param friends map of friends
      */
 
@@ -173,7 +186,8 @@ public class FirebaseInterfacer {
 
     /**
      * matches friends ordered by email
-     * @param email email to match
+     *
+     * @param email   email to match
      * @param friends map of friends
      */
     public void matchEmail(String email, ArrayAdapter<User> friends) {
@@ -182,47 +196,56 @@ public class FirebaseInterfacer {
 
     /**
      * Add user's request to database for persistence
+     *
      * @param request the request to be added
      */
 
     public void addRequest(Request request) {
-        Map<String, Object> item = new HashMap<>();
-        item.put(REQUEST_NAME, request.getName());
-        item.put(REQUEST_PRICE, request.getPrice());
-        item.put(REQUEST_MATCHED, request.isMatched());
-        ref.child(curID).child(REQUESTS).push().setValue(item);
+        ref.child(curID).child(REQUESTS).push().setValue(request.toMap());
     }
 
     /**
      * Add user's sale to database for persistence
+     *
      * @param sale the sale to be added
      */
 
     public void addSale(Sale sale) {
-        Map<String, Object> item = new HashMap<>();
-        item.put(SALE_NAME, sale.getName());
-        item.put(SALE_PRICE, sale.getPrice());
-        ref.child(curID).child(SALES).push().setValue(item);
+        ref.child(curID).child(SALES).push().setValue(sale.toMap());
+        findMatches(sale);
     }
 
     /**
      * Populate a list with the user's current requests
+     *
      * @param adapter object to contain the user's requests
      */
     public void getRequests(final ArrayAdapter<Request> adapter) {
-        Query query = ref.child(curID).child(REQUESTS);
+        adapter.clear();
+        iterateOverRequests(curID, new Consumer<Request>() {
+            @Override
+            public void consume(Request request) {
+                adapter.add(request);
+            }
+        });
+    }
+
+    private void iterateOverRequests(String id, final Consumer<Request> consumer) {
+        Query query = ref.child(id).child(REQUESTS);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //dataSnapshot.getValue() is a map from strings (random id) to hashmaps (that represents requests)
-                adapter.clear();
                 Map<String, Map<String, Object>> requests = (HashMap) dataSnapshot.getValue();
                 if (requests != null) {
-                    for (Map request : requests.values()) {
-                        adapter.add(
+                    for (Map.Entry<String, Map<String, Object>> entry : requests.entrySet()) {
+                        Map request = entry.getValue();
+                        consumer.consume(
                                 new Request(
                                         (String) request.get(REQUEST_NAME),
-                                        (double) request.get(REQUEST_PRICE)
+                                        (double) request.get(REQUEST_PRICE),
+                                        (boolean) request.get(REQUEST_MATCHED),
+                                        entry.getKey()
                                 )
                         );
                     }
@@ -236,59 +259,38 @@ public class FirebaseInterfacer {
         });
     }
 
-    /**
-     * Populate a list with the user's current sales
-     * @param adapter object to contain the user's sales
-     */
-    public void getSales(final ArrayAdapter<Sale> adapter) {
-        Query query = ref.child(curID).child(SALES);
-        query.addValueEventListener(new ValueEventListener() {
+    private void findMatches(final Sale sale) {
+        iterateOverFriends(new Consumer<Friend>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //dataSnapshot.getValue() is a map from strings (random id) to hashmaps (that represents sales)
-                adapter.clear();
-                Map<String, Map<String, Object>> sales = (HashMap) dataSnapshot.getValue();
-                if (sales != null) {
-                    for (Map sale : sales.values()) {
-                        adapter.add(
-                                new Sale(
-                                        (String) sale.get(SALE_NAME),
-                                        (double) sale.get(SALE_PRICE)
-                                )
-                        );
+            public void consume(final Friend friend) {
+                iterateOverRequests(friend.getUid(), new Consumer<Request>() {
+                    @Override
+                    public void consume(Request request) {
+                        if (isMatched(sale, request)) {
+                            request.setMatched(true);
+                            ref.child(friend.getUid()).child(REQUESTS).child(request.getId()).updateChildren(
+                                    request.toMap()
+                            );
+                        }
                     }
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
+                });
             }
         });
     }
-//
-//    private void findMatches(Sale sale) {
-//        Object dataSnapshot;
-//        Query query = ref.child(USERS);
-//        Map<String, Map<String, Object>> requests = (HashMap) dataSnapshot.getValue();
-//        if (requests != null) {
-//            for (Map.Entry entry : requests.entrySet()) {
-//                Map request = (Map) entry.getValue();
-//                if (request.get(REQUEST_NAME).equals(sale.getName())) {
-//                    if ((Double) request.get(REQUEST_PRICE) >= sale.getPrice()) {
-//                        ref.child(USERS).child(curID).child(REQUESTS).child((String) entry.getKey()).child(REQUEST_MATCHED).set(true);
-//                    }
-//                }
-//            }
-//        }
-//    }
+
+    private boolean isMatched(Sale sale, Request request) {
+        return (sale.getName().toLowerCase().trim().equals(
+                request.getName().toLowerCase().trim())
+                && sale.getPrice() <= request.getPrice());
+    }
 
 
     /**
      * set the name of a user
+     *
      * @param view the view that needs to change corresponding to a change in the name
      */
-    public void setName(final TextView view){
+    public void setName(final TextView view) {
         ref.child(curID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -306,9 +308,10 @@ public class FirebaseInterfacer {
 
     /**
      * Orders friends by desired attribute
-     * @param value value to search for
+     *
+     * @param value     value to search for
      * @param attribute value to order by
-     * @param adapter Map of friends
+     * @param adapter   Map of friends
      */
     private void findFriendsBy(final String value, String attribute, final ArrayAdapter<User> adapter) {
         Query query = ref.orderByChild(attribute)
