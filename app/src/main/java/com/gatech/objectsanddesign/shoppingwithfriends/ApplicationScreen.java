@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 
@@ -49,12 +48,8 @@ public class ApplicationScreen extends NavigationActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -69,11 +64,6 @@ public class ApplicationScreen extends NavigationActivity {
 
         ListView mRequestsList;
         ArrayAdapter<Request> mRequestsAdapter;
-        ListView mSalesList;
-        ArrayAdapter<Sale> mSalesAdapter;
-
-        public PlaceholderFragment() {
-        }
 
         /**
          * Populate the fragment with the appropriate text fields and buttons
@@ -85,14 +75,16 @@ public class ApplicationScreen extends NavigationActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             View rootView = inflater.inflate(R.layout.fragment_application_screen, container, false);
+
             if((new Firebase("https://2340.firebaseio.com").getAuth() == null)){
                 Intent i = new Intent(getActivity(), MainActivity.class);
                 getActivity().finish();
                 startActivity(i);
             } else {
                 mRequestsList = (ListView) rootView.findViewById(R.id.requests_list);
-                mRequestsAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+                mRequestsAdapter = new RequestArrayAdaptor(getActivity(), R.layout.list_item_request);
                 mRequestsList.setAdapter(mRequestsAdapter);
                 FirebaseInterfacer.interfacer.getRequests(mRequestsAdapter);
             }
