@@ -1,5 +1,7 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
+import android.location.Location;
+
 import java.text.DecimalFormat;
 import java.util.Currency;
 import java.util.HashMap;
@@ -12,10 +14,12 @@ import java.util.Map;
 public class Sale {
     private String name;
     private double price;
+    private Location location;
 
-    public Sale(String name, double price) {
+    public Sale(String name, double price, Location location) {
         this.name = name;
         this.price = price;
+        this.location = location;
     }
 
     /**
@@ -35,15 +39,8 @@ public class Sale {
         return price;
     }
 
-    /**
-     * Get a string representation of the sale in the form name: price
-     * @return string representation of the sale
-     */
-    @Override
-    public String toString(){
-        DecimalFormat fmt = new DecimalFormat("$ #######.00");
-        fmt.setCurrency(Currency.getInstance(Locale.US));
-        return name + ": " + fmt.format(price);
+    public Location getLocation() {
+        return location;
     }
 
     public Map toMap() {
@@ -51,5 +48,17 @@ public class Sale {
         item.put(FirebaseInterfacer.SALE_NAME, getName());
         item.put(FirebaseInterfacer.SALE_PRICE, getPrice());
         return item;
+    }
+
+    /**
+     * Get a string representation of the sale in the form name: price
+     *
+     * @return string representation of the sale
+     */
+    @Override
+    public String toString() {
+        DecimalFormat fmt = new DecimalFormat("$ #######.00");
+        fmt.setCurrency(Currency.getInstance(Locale.US));
+        return name + ": " + fmt.format(price);
     }
 }

@@ -11,6 +11,8 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,7 @@ public class FirebaseInterfacer {
     public static final String SALE_NAME = "name";
     public static final String SALE_PRICE = "price";
     public static final String SALES = "sales";
+    public static final String LOCATION = "location";
     public static FirebaseInterfacer interfacer = new FirebaseInterfacer();
     private Firebase ref;
     private String curID;
@@ -211,7 +214,12 @@ public class FirebaseInterfacer {
      */
 
     public void addSale(Sale sale) {
-        ref.child(curID).child(SALES).push().setValue(sale.toMap());
+        Firebase saleRef = ref.child(curID).child(SALES).push();
+        saleRef.setValue(sale.toMap());
+        new GeoFire(saleRef).setLocation(LOCATION, new GeoLocation(
+                sale.getLocation().getLatitude(),
+                sale.getLocation().getLongitude()
+        ));
         findMatches(sale);
     }
 

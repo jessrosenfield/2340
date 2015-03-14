@@ -1,5 +1,6 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +13,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 /**
  * Activity for user to report new sales
@@ -58,10 +63,17 @@ public class NewSale extends NavigationActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
-        Button mAddSale;
-        EditText mName;
-        EditText mPrice;
+    public static class PlaceholderFragment extends Fragment
+            implements GooglePlayServicesClient.ConnectionCallbacks,
+            GooglePlayServicesClient.OnConnectionFailedListener,
+            GoogleApiClient.OnConnectionFailedListener,
+            GoogleApiClient.ConnectionCallbacks {
+
+        private Button mAddSale;
+        private EditText mName;
+        private EditText mPrice;
+        private Location mLastLocation;
+        private GoogleApiClient mGoogleApiClient;
 
         public PlaceholderFragment() {
         }
@@ -70,37 +82,69 @@ public class NewSale extends NavigationActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_new_sale, container, false);
+
             mAddSale = (Button) rootView.findViewById(R.id.add_sale);
             mName = (EditText) rootView.findViewById(R.id.add_sale_name);
             mPrice = (EditText) rootView.findViewById(R.id.add_sale_price);
 
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+
+            mGoogleApiClient.connect();
+
             mAddSale.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(validateInput()){
+                    if (validateInput()) {
                         FirebaseInterfacer.interfacer.addSale(new Sale(
                                 mName.getText().toString(),
-                                new Double(mPrice.getText().toString())
+                                new Double(mPrice.getText().toString()),
+                                mLastLocation
                         ));
                         mName.getText().clear();
                         mPrice.getText().clear();
                         Toast.makeText(getActivity(),
                                 "Sale successfully added",
                                 Toast.LENGTH_SHORT).show();
+                        mGoogleApiClient.disconnect();
                     }
                 }
             });
             return rootView;
         }
 
-        private boolean validateInput(){
-            try{
+        private boolean validateInput() {
+            try {
                 Double.parseDouble(mPrice.getText().toString());
                 return true;
             } catch (NumberFormatException ex) {
                 mPrice.setError("Number not a valid price.");
                 return false;
             }
+        }
+
+        @Override
+        public void onConnected(Bundle bundle) {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+        }
+
+        @Override
+        public void onDisconnected() {
+
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
+
+        @Override
+        public void onConnectionFailed(ConnectionResult connectionResult) {
+
         }
     }
 

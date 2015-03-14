@@ -24,5 +24,7 @@
     <string name="your_requests">Your Requests</string>
     <string name="add_sale">Add Sale</string>
     <string name="your_sales">Your Sales</string>
+    <string name="nearby_sales">Nearby Sales</string>
+    <string name="title_activity_nearby_sales">Nearby Sales</string>
 
 </resources>
