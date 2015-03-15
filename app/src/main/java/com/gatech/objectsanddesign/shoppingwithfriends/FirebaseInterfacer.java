@@ -1,6 +1,7 @@
 package com.gatech.objectsanddesign.shoppingwithfriends;
 
 import android.content.Context;
+import android.location.Location;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,11 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,14 +42,13 @@ public class FirebaseInterfacer {
     public static final String SALE_NAME = "name";
     public static final String SALE_PRICE = "price";
     public static final String SALES = "sales";
-    public static final String LOCATION = "location";
+    public static final String FRIENDS_SALES = "friendsales";
     public static FirebaseInterfacer interfacer = new FirebaseInterfacer();
     private Firebase ref;
     private String curID;
 
     public FirebaseInterfacer() {
         ref = new Firebase(BASE);
-        ref = ref.child(USERS);
         curID = ref.getAuth().getUid();
 
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
@@ -63,7 +68,7 @@ public class FirebaseInterfacer {
      * @param context the activity in which to display the toast
      */
     public void addFriend(final User friend, final Context context) {
-        Query query = ref.child(curID).child(FRIENDS).orderByKey()
+        Query query = ref.child(USERS).child(curID).child(FRIENDS).orderByKey()
                 .equalTo(friend.getUid());
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -73,8 +78,8 @@ public class FirebaseInterfacer {
                     Map<String, Object> f = new HashMap<>(), u = new HashMap<>();
                     f.put(friend.getUid(), 0);
                     u.put(curID, 0);
-                    ref.child(ref.getAuth().getUid()).child(FRIENDS).updateChildren(f);
-                    ref.child(friend.getUid()).child(FRIENDS).updateChildren(u);
+                    ref.child(USERS).child(ref.getAuth().getUid()).child(FRIENDS).updateChildren(f);
+                    ref.child(USERS).child(friend.getUid()).child(FRIENDS).updateChildren(u);
 
                     Toast.makeText(context,
                             "You are now friends with " + friend.toString(),
@@ -100,8 +105,8 @@ public class FirebaseInterfacer {
      * @param context activity to display toast in
      */
     public void removeFriend(final User friend, final Context context) {
-        ref.child(curID).child(FRIENDS).child(friend.getUid()).removeValue();
-        ref.child(friend.getUid()).child(FRIENDS).child(curID).removeValue();
+        ref.child(USERS).child(curID).child(FRIENDS).child(friend.getUid()).removeValue();
+        ref.child(USERS).child(friend.getUid()).child(FRIENDS).child(curID).removeValue();
 
         Toast.makeText(context,
                 "You are no longer friends with " + friend.toString(),
@@ -115,8 +120,12 @@ public class FirebaseInterfacer {
      */
 
     public void getFriends(final ArrayAdapter<Friend> adapter) {
-        adapter.clear();
         iterateOverFriends(new Consumer<Friend>() {
+            @Override
+            public void preconsume() {
+                adapter.clear();
+            }
+
             @Override
             public void consume(Friend friend) {
                 adapter.add(friend);
@@ -125,15 +134,16 @@ public class FirebaseInterfacer {
     }
 
     private void iterateOverFriends(final Consumer<Friend> consumer) {
-        Query query = ref.child(curID).child(FRIENDS);
+        Query query = ref.child(USERS).child(curID).child(FRIENDS);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                consumer.preconsume();
                 Map<String, Object> friendsMap = (Map<String, Object>) dataSnapshot.getValue();
                 if (friendsMap != null) {
                     for (final Map.Entry<String, Object> entry : friendsMap.entrySet()) {
 
-                        Query findFriend = ref.child(entry.getKey());
+                        Query findFriend = ref.child(USERS).child(entry.getKey());
                         findFriend.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -204,7 +214,7 @@ public class FirebaseInterfacer {
      */
 
     public void addRequest(Request request) {
-        ref.child(curID).child(REQUESTS).push().setValue(request.toMap());
+        ref.child(USERS).child(curID).child(REQUESTS).push().setValue(request.toMap());
     }
 
     /**
@@ -213,13 +223,36 @@ public class FirebaseInterfacer {
      * @param sale the sale to be added
      */
 
-    public void addSale(Sale sale) {
-        Firebase saleRef = ref.child(curID).child(SALES).push();
+    public void addSale(final Sale sale) {
+        final Firebase saleRef = ref.child(SALES).push();
+        final Firebase userSaleRef = ref.child(USERS).child(curID).child(SALES);
+
+        //Add to sales database
         saleRef.setValue(sale.toMap());
-        new GeoFire(saleRef).setLocation(LOCATION, new GeoLocation(
+
+        //Add reference to user database, with value being the location
+        new GeoFire(userSaleRef).setLocation(saleRef.getKey(), new GeoLocation(
                 sale.getLocation().getLatitude(),
                 sale.getLocation().getLongitude()
         ));
+
+        //Add references to friends, with value being the location
+        iterateOverFriends(new Consumer<Friend>() {
+            @Override
+            public void preconsume() {
+
+            }
+
+            @Override
+            public void consume(Friend friend) {
+                Firebase friendRef = ref.child(USERS).child(friend.getUid()).child(FRIENDS_SALES);
+                new GeoFire(friendRef).setLocation(saleRef.getKey(), new GeoLocation(
+                        sale.getLocation().getLatitude(),
+                        sale.getLocation().getLongitude()
+                ));
+            }
+        });
+
         findMatches(sale);
     }
 
@@ -229,8 +262,12 @@ public class FirebaseInterfacer {
      * @param adapter object to contain the user's requests
      */
     public void getRequests(final ArrayAdapter<Request> adapter) {
-        adapter.clear();
         iterateOverRequests(curID, new Consumer<Request>() {
+            @Override
+            public void preconsume() {
+                adapter.clear();
+            }
+
             @Override
             public void consume(Request request) {
                 adapter.add(request);
@@ -239,11 +276,12 @@ public class FirebaseInterfacer {
     }
 
     private void iterateOverRequests(String id, final Consumer<Request> consumer) {
-        Query query = ref.child(id).child(REQUESTS);
+        Query query = ref.child(USERS).child(id).child(REQUESTS);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //dataSnapshot.getValue() is a map from strings (random id) to hashmaps (that represents requests)
+                consumer.preconsume();
                 Map<String, Map<String, Object>> requests = (HashMap) dataSnapshot.getValue();
                 if (requests != null) {
                     for (Map.Entry<String, Map<String, Object>> entry : requests.entrySet()) {
@@ -270,13 +308,23 @@ public class FirebaseInterfacer {
     private void findMatches(final Sale sale) {
         iterateOverFriends(new Consumer<Friend>() {
             @Override
+            public void preconsume() {
+
+            }
+
+            @Override
             public void consume(final Friend friend) {
                 iterateOverRequests(friend.getUid(), new Consumer<Request>() {
+                    @Override
+                    public void preconsume() {
+
+                    }
+
                     @Override
                     public void consume(Request request) {
                         if (isMatched(sale, request)) {
                             request.setMatched(true);
-                            ref.child(friend.getUid()).child(REQUESTS).child(request.getId()).updateChildren(
+                            ref.child(USERS).child(friend.getUid()).child(REQUESTS).child(request.getId()).updateChildren(
                                     request.toMap()
                             );
                         }
@@ -299,7 +347,7 @@ public class FirebaseInterfacer {
      * @param view the view that needs to change corresponding to a change in the name
      */
     public void setName(final TextView view) {
-        ref.child(curID).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child(USERS).child(curID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
@@ -347,6 +395,51 @@ public class FirebaseInterfacer {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    public void addNearbySalesMarkers(final GoogleMap map, final Location loc) {
+        GeoFire geoFire = new GeoFire(ref.child(USERS).child(curID).child(FRIENDS_SALES));
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(loc.getLatitude(), loc.getLongitude()), NearbySales.RADIUS);
+
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, final GeoLocation location) {
+                Query nameQuery = ref.child(SALES).child(key).child(SALE_NAME);
+                nameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        map.addMarker(new MarkerOptions()
+                                .position(new LatLng(location.latitude, location.longitude))
+                                .title((String) dataSnapshot.getValue()));
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(FirebaseError error) {
 
             }
         });
