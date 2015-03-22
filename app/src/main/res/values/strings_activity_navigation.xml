@@ -5,6 +5,8 @@
         <item>@string/find_friends</item>
         <item>@string/list_friends</item>
         <item>@string/add_request</item>
+        <item>@string/add_sale</item>
+        <item>@string/nearby_sales</item>
         <item>@string/logout</item>
     </string-array>
 

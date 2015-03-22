@@ -19,7 +19,6 @@ import com.firebase.client.Firebase;
 
 public class FriendDetails extends NavigationActivity {
 
-    private FirebaseInterfacer interfacer;
     private Friend friend;
 
     @Override
@@ -37,7 +36,7 @@ public class FriendDetails extends NavigationActivity {
                 getSupportFragmentManager().beginTransaction().add(
                         R.id.container, placeholder).commit();
             }
-            interfacer = new FirebaseInterfacer();
+            FirebaseInterfacer.interfacer = new FirebaseInterfacer();
             friend = data.getParcelable("EXTRA_Friend");
         }
     }
@@ -67,7 +66,7 @@ public class FriendDetails extends NavigationActivity {
             return true;
         }
         if (id == R.id.remove_friend) {
-            interfacer.removeFriend(friend, this);
+            FirebaseInterfacer.interfacer.removeFriend(friend, this);
             return true;
         }
 

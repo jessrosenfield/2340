@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
@@ -69,7 +67,6 @@ public class FriendSearch extends NavigationActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-        FirebaseInterfacer ref;
         EditText mLast;
         EditText mFirst;
         EditText mEmail;
@@ -79,7 +76,6 @@ public class FriendSearch extends NavigationActivity {
         List<User> friends;
 
         public PlaceholderFragment() {
-            ref = new FirebaseInterfacer();
         }
 
         @Override
@@ -105,7 +101,7 @@ public class FriendSearch extends NavigationActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     ConcreteUser friend = (ConcreteUser) parent.getItemAtPosition(position);
-                    ref.addFriend(friend, getActivity());
+                    FirebaseInterfacer.interfacer.addFriend(friend, getActivity());
                     mFirst.getText().clear();
                     mLast.getText().clear();
                     mEmail.getText().clear();
@@ -119,9 +115,9 @@ public class FriendSearch extends NavigationActivity {
         }
 
         public void updateList(){
-            ref.matchFirstName(mFirst.getText().toString(), mFriendsAdaptor);
-            ref.matchLastName(mLast.getText().toString(), mFriendsAdaptor);
-            ref.matchEmail(mEmail.getText().toString(), mFriendsAdaptor);
+            FirebaseInterfacer.interfacer.matchFirstName(mFirst.getText().toString(), mFriendsAdaptor);
+            FirebaseInterfacer.interfacer.matchLastName(mLast.getText().toString(), mFriendsAdaptor);
+            FirebaseInterfacer.interfacer.matchEmail(mEmail.getText().toString(), mFriendsAdaptor);
         }
 
         public static void hide_keyboard_from(Context context, View view) {

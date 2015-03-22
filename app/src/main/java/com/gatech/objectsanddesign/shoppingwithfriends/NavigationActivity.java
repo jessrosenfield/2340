@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -95,24 +94,18 @@ public class NavigationActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
-    /** Swaps fragments in the main content view */
+    /**
+     * Swaps fragments in the main content view
+     */
     private void selectItem(int position) {
         // Highlight the selected item, update the title, and close the drawer
         mDrawerList.setItemChecked(position, true);
         setTitle(mTitleList[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
         Intent i = new Intent(this, ApplicationScreen.class);
-        switch(position) {
+        switch (position) {
             case 0:
                 i = new Intent(this, ApplicationScreen.class);
-                finish();
                 break;
             case 1:
                 i = new Intent(this, FriendSearch.class);
@@ -124,6 +117,12 @@ public class NavigationActivity extends ActionBarActivity {
                 i = new Intent(this, NewRequest.class);
                 break;
             case 4:
+                i = new Intent(this, NewSale.class);
+                break;
+            case 5:
+                i = new Intent(this, NearbySales.class);
+                break;
+            case 6:
                 Firebase.setAndroidContext(this);
                 (new Firebase("http://2340.firebaseio.com")).unauth();
                 i = new Intent(this, MainActivity.class);
@@ -131,16 +130,26 @@ public class NavigationActivity extends ActionBarActivity {
                 break;
         }
 
-        if(!this.getClass().getSimpleName().equals(ApplicationScreen.class.getSimpleName())){
-            finish();
+        // If the target is the same as the current activity, do nothing
+        if (!this.getClass().getName().equals(i.getComponent().getClassName())) {
+            if (!this.getClass().getName().equals(ApplicationScreen.class.getName())) {
+                finish();
+            }
+            startActivity(i);
         }
-        startActivity(i);
     }
 
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
         getSupportActionBar().setTitle(mTitle);
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectItem(position);
+        }
     }
 
 }
